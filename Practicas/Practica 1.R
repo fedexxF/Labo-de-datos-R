@@ -138,6 +138,146 @@ d<- -3
 e<- 4
 f<- -4
 g<- 4
+#Guia 1 Labo de datos
+#23/08
+#
+
+#------------ej1----------
+#Ejecutar e interpretar el resultado del siguiente conjunto de sentencias:
+#Todos ocupan 64 bits, son de doble precision
+
+
+#Es floating mas pequeño positivo que reulta de 1+x!=1
+#La dsitancia, epsilon, desde el 1 hasta el siguinete numero de precision doble
+
+.Machine$double.eps
+
+#el epsilon tal que 1-x!=1
+
+.Machine$double.neg.eps
+
+# el numero de punto flotante mas pequeño que puede representar la maquina
+
+.Machine$double.xmin
+
+#el numero de punto flotante mas grande que puede representar la maquina
+
+.Machine$double.xmax
+
+#Es la base para la cual se representa el punto flotante
+
+.Machine$double.base
+
+#la cantidad de digitos en el significado del numero del punto flotante (la mantisa)
+
+.Machine$double.digits
+
+#El entero maximo que puede representar la maaquina
+
+.Machine$integer.max
+
+#------------ej2----------
+
+#Interpretar el resultado de la siguiente operacíon:
+
+a <-as.integer(1) #Le asignamos la clase entera a "a"
+b <- as.integer(2) #Le asignamos la clase entera a "b"
+a/b               #Dividimos dichos numeros a y b
+class(a/b)        #EL resultado de dividir 1/2 nos da un numero decimal, ademas al dividir dos numeros la operacion
+#Nos dara un numero y debemos indicarle a R si es un integer 
+
+#Comparar el resultado de las siguientes operaciones:
+
+a <- as.double(1)
+b <- as.double(3)
+a/b
+class(a/b)
+
+a <- as.single(1)
+b <- as.single(3)
+a/b
+class(a/b)
+
+#Analizar los resultados de las siguientes sentencias:
+
+a <- as.integer(2) #Numero entero
+b <- 3.14159       #Numero decimal  
+
+is.integer(a)
+is.integer(b)
+is.numeric(a)
+is.numeric(b)
+is.double(a)
+is.double(b)
+
+
+
+
+#Interpretar el resultado de la siguiente operacíon:
+a <- as.integer(3)
+b <- as.integer(3.14159) #EStamos obligando a que sea un entero... osea 3 supongo
+a*b                      # 3 . 3 = 9
+
+
+#------------ej3-------------
+
+#Determinar el resultado de las siguientes operaciones, dado a un ńumero real y b un n ́umero entero:
+a <-0.85
+b<- as.integer(2)
+b <-round(a)  #Redondea el valor de a al entero mas proximo a "a"
+b <-ceiling(a) # Redondea al siguiente valor superior entero de "a"
+b <-floor(a)  # Redondea al siguiente valor inferior entero de "a"
+b <-trunc(a) # "Corta" la parte decimal y se queda solo con la entera (no redondea nada)
+
+
+#------------ej4-------------
+
+#a) Armar un programa que escriba por pantalla la frase “Hola mundo”.
+#b) Armar un programa que pida ingresar un n ́umero y que luego imprima por pantalla el n ́umero
+#ingresado
+
+print("Hola mundo") #Imrpime el argumento en la consola
+
+#Usamos readline y definimos en su argumento una instruccion clara a realizar por el usuraio en la consola
+#Despues imprimimos ese valor en la consola usando print
+numero<-readline("Ingresar un numero n cualquiera :")  
+print(numero, quote = FALSE) #Lo vi en clases y quise quitarle las comillas con quote=False.
+
+
+#------------ej5-------------
+#a) Escribir en lenguaje R las siguientes expresiones y encontrar la soluci ́on para los siguientes
+#valores: 
+#a=1 b=2 c=3 d=5 e=2 f=-4 g=1/3 
+#a=1, b=2, c=3, d=-3,e=4, f=-4, g=4
+
+a<- 1
+b<- 2
+c<- 3
+d<- 5
+e<- 2
+f<- -4
+g<- 1/3
+
+#i) 
+((a+b/(c+d))+exp(2))
+
+
+#ii)
+a+b/(c+(d/e+f))
+
+#iii) 
+((a+1)^2-1/(c+d)^2) /(f + g)^4
+
+#iv) 
+(3(a)^2-2a)/(7(b)^3+4(b)^2-2))
+
+a<- 1
+b<- 2
+c<- 3
+d<- -3
+e<- 4
+f<- -4
+g<- 4
 
 
 #i) 
@@ -303,15 +443,57 @@ print(paste(YYYY,".",MM,".",DD))
 
 #Piden un programa en donde se deba ingresar YYYY (años), MM (meses), DD (dia) y que imprima el resutado
 #“La fecha ingresada es: DD del MM de YYYY”.
-YYYY<-readline("Ingresar año: ")
-MM<-readline("Ingresar Mes : ")
-DD<-readline("Ingresar dia : ")
-print(paste("La fecha ingresada es:"," ",DD," ","del", " ",MM," ","de"," ",YYYY))
+Fecha<-readline("Ingresar fecha en formato YYYY-MM-DD incluyendo los guiones : ")
+
+print(paste("La fecha ingresada es:"," ",substr(Fecha,1,4)," ","del", " ",substr(Fecha,6,7)," ","de"," ",substr(Fecha,9,10)))
 
 
 #Nos piden un programa en el que alguien ingrese su nombre y nos devuelva la priemra y ultima letra
+#Usamos nchar para sacar el largo del nombre. Como queriamos la ultima letra, le pedimos que que substr vaya de la ultima letra a la ultima letra
+#Usamos substr y le pédimos que nos devuelva la priemr letra, es decir que vaya de 1 a 1.
 
 nombre<-readline("Ingresar nombre : ")
-print(substr(nombre, start=1, stop=1))
+print(paste(substr(nombre,1,1)," ",substr(nombre,nchar(nombre),nchar(nombre))))
+
+
+#------------ej9-----------
+
+#Hacer un programa que pida el ingreso del nombre y la edad de una persona y calcule la
+#edad que tendr ́ıa en 2030. Luego, el programa debe imprimir un cartel que dice:
+#“Nombre va a tener X a ̃nos en 2030”
+#donde Nombre es el nombre ingresado y X la edad que tendr ́ıa en 2030. Asuma que esa persona
+#todav ́ıa no cumpli ́o a ̃nos en 2022
+
+#Pedimos al usuario que ingrese los datos de nombre y edad
+
+Nombre<-readline("Ingresar el nombre : ")
+Edad<-readline("Ingresar la edad : ")  
+#Deinifimos X como la edad que va a tener la persona en 2030
+#Uso as.numeric(substr(Sys.Date(),1,4)) para setear la fecha actual. ES decir que alguien en 2023 podria usar este codigo!
+#La edad esta ingresada como un character, tenemos que hacerlo numerico para operar. Por eso usamos as.numeric
+X<-2030-as.numeric(substr(Sys.Date(),1,4)) + as.numeric(Edad)
+X
+print(paste(Nombre, " " ,"va a tener", " " , X , " " ,"años en 2030"))
+
+#------------ej10-----------
+
+#Hacer un programa que le pida a un alumno de la carrera de Licenciatura en Ciencias
+#de la Atm ́osfera sus datos personales (Nombre, Apellido), su libreta universitaria en formato N/AA,
+#donde N es un n ́umero (que puede tener de 1 a 4 cifras) y AA es la terminaci ́on del a ̃no en que se
+#inscribi ́o, y la cantidad de materias aprobadas. Luego el programa debe imprimir el siguiente mensaje:
+#  “El alumno Nombre y Apellido se inscribi ́o como alumno de Exactas en el puesto N en el a ̃no 20AA
+#y debe aprobar X materias para obtener el t ́ıtulo de grado”
+#donde Nombre, Apellido, N y AA son los datos ingresados por el usuario. Notar que N y AA no se
+#ingresan por separado, sino que corresponden al ingreso de la libreta universitaria. Asumir que la
+#carrera cuenta con 20 materias en total y que el alumno se inscribi ́o despu ́es de 1999. Antes de escribir
+#el c ́odigo, escriba el diagrama de flujo asociado
+
+Nombre<-readline("Ingresar su nombre : ")
+Apellido<-readline("Ingresar su apellido : ")
+Libreta<-readline("Ingresar su Numero de libreta en formato N/AA : ")
+MateriasAprobadas<-("INgresar cantidad de materias aprobadas : ")
+
+print(paste("El alumno",Nombre,"y",Apellido, "se inscribío como alumno de Exactas en el puesto" N en el a ̃no 20AA
+y debe aprobar X materias para obtener el t ́ıtulo de grado"))
 
 
