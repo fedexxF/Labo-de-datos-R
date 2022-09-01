@@ -291,7 +291,7 @@ a+b/(c+(d/e+f))
 ((a+1)^2-1/(c+d)^2) /(f + g)^4
 
 #iv) 
-(3(a)^2-2a)/(7(b)^3+4(b)^2-2))
+(3(a)^2-2a)/(7(b)^3+4(b)^2-2)
 
 
 
@@ -491,9 +491,11 @@ print(paste(Nombre, " " ,"va a tener", " " , X , " " ,"años en 2030"))
 Nombre<-readline("Ingresar su nombre : ")
 Apellido<-readline("Ingresar su apellido : ")
 Libreta<-readline("Ingresar su Numero de libreta en formato N/AA : ")
-MateriasAprobadas<-("INgresar cantidad de materias aprobadas : ")
+MateriasAprobadas<-as.numeric(readline("INgresar cantidad de materias aprobadas : "))
+substr(Libreta,nchar(Libreta)-1,nchar(Libreta))
+substr(Libreta,nchar(Libreta)-5,nchar(Libreta)-3)
 
-print(paste("El alumno",Nombre,"y",Apellido, "se inscribío como alumno de Exactas en el puesto" N en el a ̃no 20AA
-y debe aprobar X materias para obtener el t ́ıtulo de grado"))
+print(paste("El alumno",Nombre,Apellido, "se inscribio como alumno de Exactas en el puesto",substr(Libreta,nchar(Libreta)-5,nchar(Libreta)-3), "en el a�o 20",substr(Libreta,nchar(Libreta)-1,nchar(Libreta)),
+"y debe aprobar", 27-MateriasAprobadas ,"materias para obtener el t �itulo de grado"))
 
 
