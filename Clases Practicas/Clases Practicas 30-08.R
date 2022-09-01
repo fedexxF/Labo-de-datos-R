@@ -19,41 +19,64 @@ x1<-as.numeric(readline("Ingresar un valor numerico :"))
 x2<-as.numeric(readline("Ingresar un valor numerico :"))
 x3<-as.numeric(readline("Ingresar un valor numerico :"))
 
-#IF DENTRO DE OTRO IF 
 
-if (x1>x2 & x1>x3 ){print("x1 es mayor a x2 y a x3")
-if (x2>x3) {print("x3 es menor x1 y a x2")
-} else {print("x2 es menor x3 y a x2")
-  }} 
-
-
-
-#Se que esto tiene que funcionar.... 
-if (x2>x3) {print("x3 es menor x1 y a x2")
-  }else {print("x2 es menor x3 y a x2")}
-
-#Voy a acomodar todo otra vez... es lo mismo 
-
-if (x1==x2 & x1==x3) {print("x1 es igual a x2 y a x3, se necesitan usar valores numericos distintos. Reingrese los valores de x1,x2,x3")
-  x1<-as.numeric(readline("Ingresar un valor numerico :"))
+if (x1!=x2 & (x1!=x3) & (x2!=x3)) {
+ if (x1>x2) {
+  if ( x1>x3 ){
+    if (x2>x3) {
+      print("x1 es el mayor y x3 el es menor")
+    } else {                                      #Que pasa si no se cumple la condicion 3
+      print("x1 es el mayor y x2 es el menor")
+    }
+  } else if (x3>x2) {                           #Que pasa si no se cumple la condicion 2
+    print("X3 es el mayor y x2 es el menor")
+  } else {print("x3 es el mayor y x1 es el menor")
+    
+  }} else if (x2>x3) { print("x2 es el mayor y x3  es el menor")
+  } else {
+    print("x3 es el mayor y x1 es el menor") #Que pasa si no se cumple la condiicon 1
+  }} else {x1<-as.numeric(readline("Ingresar un valor numerico :"))
   x2<-as.numeric(readline("Ingresar un valor numerico :"))
   x3<-as.numeric(readline("Ingresar un valor numerico :"))
+}
   
-} else if (x1>x2 & x1>x3 ){print("x1 es mayor a x2 y a x3")
-} else if (x2>x3) {print("x3 es menor x1 y a x2")
-} else {print("x2 es menor que x1 y a x3")
- }
-    
-    
-    
-    
-if (x1==x2 & x1==x3) {print("x1 es igual a x2 y a x3, se necesitan usar valores numericos distintos. Reingrese los valores de x1,x2,x3")
-} else if (x2>x1 & x2>x3 ){print("x2 es mayor a x1 y a x3")
-} else if (x1>x3) {print("x1 es menor x3 y a x2")
-} else {print("x1 es menor que x2 y a x3")
 
 
+#IF DENTRO DE OTRO IF 
+
+
+if (x1>x2) {
+  if ( x1>x3 ){
+    if (x2>x3) {
+      print("x1 es el mayor y x3 el es menor")
+    } else {                                      #Que pasa si no se cumple la condicion 3
+      print("x1 es el mayor y x2 es el menor")
+    }
+  } else if (x3>x2) {                           #Que pasa si no se cumple la condicion 2
+    print("X3 es el mayor y x2 es el menor")
+  } else {print("x3 es el mayor y x1 es el menor")
     
+  }} else if (x2>x3) { print("x2 es el mayor y x3  es el menor")
+  } else {
+    print("x3 es el mayor y x1 es el menor") #Que pasa si no se cumple la condiicon 1
+  } 
+
+
+#Esta es la logica usada
+
+#if (<condicion logica>){
+#  if (<condicion logica>) {
+#    
+#    <Proceso logico del if2>
+#      
+#  }else
+#  {
+#    <proceso del if2 si no se cumple>
+#  }
+#}else {
+#  <proceso del if1 si no se cumple>
+#}
+
     
 #--------------------------------------------------------------------------------------------------
 #crear un programa que le pida a un usuario el ingreso por consola de:
@@ -86,7 +109,4 @@ if (Tmax>Tmin) {
 } else {print("La temperatura máxima ingresada es menor a la temperatura mínima, por favor verificar los datos")
   }
 
-
-
-
-
+      
