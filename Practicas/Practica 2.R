@@ -131,9 +131,9 @@ if (x>0) {
 
 #---------------------------------------ej4-------------------------------------------------------------
 
-#a) El siguiente fragmento de c´odigo busca alertar acerca de la presencia o no de fiebre a partir
-#de la lectura de un term´ometro (la lectura est´a contenida en la variable temp). Verificar si el
-#funcionamiento del c´odigo es correcto, y si no lo es corregirlo.
+#a) El siguiente fragmento de c?odigo busca alertar acerca de la presencia o no de fiebre a partir
+#de la lectura de un term?ometro (la lectura est?a contenida en la variable temp). Verificar si el
+#funcionamiento del c?odigo es correcto, y si no lo es corregirlo.
 #i f ( temp < 35 ) {
 #  pr int ( " Temperatura por deb a j o de l o normal " )
 #} e l s e i f ( temp > 35 ) {
@@ -143,8 +143,8 @@ if (x>0) {
 #} e l s e i f ( temp > 38 ) {
 #  pr int ( " Fi e b r e a l t a " )
 #}
-#b) Dise~nar un algortimo que permita ingresar un d´ia de la semana y devuelva el n´umero (de 1 a 7)
-#o viceversa. El algoritmo tiene que detectar por si mismo el sentido de la conversi´on. Si el valor
+#b) Dise~nar un algortimo que permita ingresar un d?ia de la semana y devuelva el n?umero (de 1 a 7)
+#o viceversa. El algoritmo tiene que detectar por si mismo el sentido de la conversi?on. Si el valor
 #almacenado en la variable es incorrecto debe se~nalarlo con un cartel.
 
 
