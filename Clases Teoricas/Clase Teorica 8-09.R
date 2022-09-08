@@ -91,8 +91,7 @@ Temp_Media <- mean(Temp)
 Temp_Media
 
 #¿cuál es la temperatura media en el mes de mayo?
-airquality$Temp
-airquality$Month
+
 
 
 #¿cuál fue el día más ventoso?
