@@ -195,22 +195,733 @@ mi_matriz[b]                      #1er valor, 5to valor, 7mo valor (B esta defin
 rm(list = ls())
 
 #defino la matriz m1 y m2
-m1<-matrix(1:6,3,2)#Creo una matriz 
-m1
-m2<-matrix(7:12,2,3)#Creo una matriz 
+m1<-matrix(1:4,2,2)#Creo una matriz de 2x2
+m1 
+m2<-matrix(5:8,2,2)#Creo una matriz de 2x2
 m2
-m2<-
+m3<-matrix(NA,nrow(m1),ncol(m2)) #Genero una variable que me guarde las matrices m1 y m2 
+m3
+
+for(i in 1:nrow(m1)){    #Recorro filas de A
+  for(l in 1:ncol(m2)){  #Recorro columnas de B
+    m3[i,l]=sum(m1[i,1:ncol(m1)]*m2[1:nrow(m3),l])  #Realizo el producto matricial
+  }
+}
+print(m3)
+
+print(m1%*%m2) #Hago de la otra forma que me piden
+
+m3==m1%*%m2     #Es TRUE en todas sus posiciones
 
 
 #b) Realizar un programa que calcule el producto componente a componente entre dos matrices A y
 #B. Verificar los resultados utilizando la funci´on "*" para el producto componente a componente
 #de arrays en R.
+
+
+rm(list = ls())
+m1<-matrix(1:4,2,2)#Creo una matriz de 2x2
+m1 
+m2<-matrix(5:8,2,2)#Creo una matriz de 2x2
+m2
+m1xm2<-matrix(0,nrow(m1),ncol(m2)) #Genero una variable que me guarde las matrices m1 y m2 
+m1xm2
+
+for(i in 1:nrow(m1)){    #Recorro filas de A
+  for(j in 1:ncol(m2)){  #Recorro columnas de B
+    m1xm2[i,j]=m1[i,j]*m2[i,j]  #Realizo el producto componente a componente
+  }
+}
+
+print(m1xm2)
+
+print(m1*m2) #Hago de la otra forma que me piden
+
+m1xm2==m1*m2     #Es TRUE en todas sus posiciones
+
+
+
+
 #c) Aplicar los programas anteriores al producto entre matrices de m´as de 100 filas/columnas y
 #comparar los tiempos involucrados. Comparar la eficicienca de las funciones de R con la de los
 #programas realizados.
+
+rm(list = ls())
+
+#defino la matriz m1 y m2
+m1<-matrix(1:10000,100,100)#Creo una matriz de 2x2
+m1 
+m2<-matrix(1:10000,100,100)#Creo una matriz de 2x2
+m2
+m3<-matrix(NA,nrow(m1),ncol(m2)) #Genero una variable que me guarde las matrices m1 y m2 
+m3
+m1xm2<-matrix(0,nrow(m1),ncol(m2)) #Genero una variable que me guarde las matrices m1 y m2 
+m1xm2
+
+t <- proc.time()  #Inicialza el cronometro
+
+
+for(i in 1:nrow(m1)){    #Recorro filas de A
+  for(l in 1:ncol(m2)){  #Recorro columnas de B
+    m3[i,l]=sum(m1[i,1:ncol(m1)]*m2[1:nrow(m3),l])  #Realizo el producto matricial
+  }
+}
+
+proc.time()-t       #Finaliza el cronometro
+
+
+
+
+t <- proc.time()
+
+m1%*%m2                 #Hago de la otra forma que me piden
+
+proc.time()-t          #Es el doble de rapido como minimo
+
+
+t <- proc.time()
+
+for(i in 1:nrow(m1)){    #Recorro filas de A
+  for(j in 1:ncol(m2)){  #Recorro columnas de B
+    m1xm2[i,j]=m1[i,j]*m2[i,j]  #Realizo el producto componente a componente
+  }
+}
+
+
+proc.time()-t  
+
+t <- proc.time()
+
+m1*m2             #Hago de la otra forma que me piden
+
+proc.time()-t  
+
+
+
+
 #d) Agregar a los programas mencionados en los puntos a) y b) un chequeo que determine antes
 #de realizar los c´alculos si las dimensiones de los arrays son compatibles para los c´alculos que
 #se quieren llevar a cabo y que en caso de que las dimensiones no sean compatibles, muestre un
 #mensaje por pantalla y que termine el programa.
+
+
+
 #e) Al programa del ejercicio anterior agregar una secci´on que identifique las componentes negativas
 #del producto de ambas matrices y las convierta en cero.
+
+
+
+
+
+#---------------------------------------ej4-------------------------------------------------------------
+
+#a) Desarrollar y programar un algoritmo que resuelva el siguiente sistema de
+#ecuaciones lineales:A ??? X = B donde A es una matriz de 2x2 y B es un vector.
+#Probar el algoritmo.
+
+
+
+rm(list = ls())
+a<-matrix(NA,2,2) #Matriz vacía de 2x2
+b<-matrix (NA,2,1) #matriz vacía de 2x1 (vector)
+a
+b
+
+#Como me piden que lo haga con 4 matrices, prefiero yo mismo ingresar los valroes. Con ciclo for pedimos el ingreso de datos
+
+#Pedimos que ingresen 4 valores en la matriz a
+for(i in 1:4){
+  a[i] <- as.numeric(readline("Ingrese los valores de A, se completa por columna: "))
+}
+a
+#Pedimos que ingresen valores al vector b
+for(j in 1:2){
+  b[j] <- as.numeric(readline("Ingrese los valores de B: "))
+}
+b
+
+#...
+
+#Para resolver esto podemso hacer un quilombo de determinantes y matrices y bla bla o
+#Podemos calcular la inversa de A y multiplicarla por B
+#Para eso necesitamos el det de A, su inversa y el producto entre ESO y B
+
+#La inversa de A es 
+# (a b) ->(d/det(a) -b/det(a)
+# (c d) ->(-c/det(a) a/det(a))
+# Podemos sacar factor  comun 1/det(a)
+#
+a
+inversa <- (1/det(a))*matrix(c(a[4],-a[2],-a[3],a[1]),2,2) #Tomo los elementos que encesito para calcular la inversa
+
+
+#Hago la multiplicacion de matrices
+
+x <- inversa%*%b
+
+#El vector final es (x1,x2) el resultado
+
+print(x)
+
+
+
+
+#b) Resolver el punto a) utilizando la funcion intrinseca "solve".
+
+print(solve(a,b)) 
+
+
+#NICEEEEE
+
+#---------------------------------------ej5-------------------------------------------------------------
+
+#a) Se tienen datos de temperatura tomados cada 3 horas en una estacion de 
+#superficie comenzando a las 00 y terminando a las 21 
+#(serie <-c( 25, 20, 18, 22, 27, 31, 32, 28)). 
+
+#Armar un script de R que permita 
+#ingresar la serie de datos por pantalla, la guarde en un vector y muestre por
+#pantalla la hora en la que ocurrio el maximo valor medido y el valor de la 
+#temperatura maxima medida
+
+
+rm(list = ls())
+
+t <- proc.time()
+
+a<-matrix(NA,1,8) #Creamos la matriz 1x8 (ya que necesitamos 8 valores!), los completamos como NA
+
+for(i in 1:8){
+  a[i] <- as.numeric(readline("Ingresar valroes de temperatura : "))
+  if(i==1){                     #Me lo robe de youtube/internet
+    max=a[i]
+  }else if (a[i]>max){ 
+    max=a[i]
+  }
+}
+
+
+hora<-which(a==max)     #Veo en que posicion se cumplió el maximo
+hora
+#printeamos el horario. 
+#Ya que el vector temepratura es 1,2,3,4,5,6,7,8... voy a definir a la hora como
+#(hora*3)-3. si hora = 1 ... 00. Y si hora = 8... 21 LISTO!!
+print(paste("El valor maximo de temperatura fue de:",max,"°C y ocurrio a las",(hora*3)-3,"hs."))
+
+proc.time()-t 
+
+#b) Repetir el inciso anterior utilizando la funcion intrinseca "max". 
+#Comparar los tiempos involucrados con los del inciso anterior.
+
+
+
+rm(list = ls())
+
+t <- proc.time()
+
+a<-matrix(NA,1,8) #Creamos la matriz 1x8 (ya que necesitamos 8 valores!), los completamos como NA
+
+for(i in 1:8){
+  a[i] <- as.numeric(readline("Ingresar valroes de temperatura : "))
+}
+
+max<-max(a)
+
+hora<-which(a==max)     #Veo en que posicion se cumplió el maximo
+hora
+#printeamos el horario. 
+#Ya que el vector temepratura es 1,2,3,4,5,6,7,8... voy a definir a la hora como
+#(hora*3)-3. si hora = 1 ... 00. Y si hora = 8... 21 LISTO!!
+print(paste("El valor maximo de temperatura fue de:",max,"°C y ocurrio a las",(hora*3)-3,"hs."))
+
+proc.time()-t 
+
+
+#c) Calcular la suma de todos los elementos de la serie de temperaturas y 
+#comparar los resultados utilizando la funcion intrinseca "sum".
+#Idem con el promedio de las temperaturas (verificar utilizando la funcion
+#intrinseca "mean").
+
+
+#Genial, ahora hay que sumar y sacar promedios con ciclo for y despues uso el comando lindo
+
+rm(list = ls())
+
+
+a<-matrix(NA,1,8) #Creamos la matriz 1x8 (ya que necesitamos 8 valores!), los completamos como NA
+sumatoria<-0
+
+
+for(i in 1:8){
+  a[i] <- as.numeric(readline("Ingresar valroes de temperatura : "))
+  sumatoria<-sumatoria+a[i]
+}
+print(sumatoria)
+promedio<-sumatoria/8  #El promedio es la suma de todos los datos dividido la cantidad de datos
+print(promedio)
+
+# Usando los comnados como una persona sana y normal
+
+suma<-sum(a)
+print(suma)
+
+prom<-mean(a)
+print(prom)
+
+
+
+#d) Extender el programa anterior, para que permita mostrar la suma pero 
+#solamente de las temperaturas que estan por encima de 20???C. (Resolver este 
+#inciso probando dos maneras, una utilizando arrays logicos y otra utilizando
+#la funcion intrinseca "which").
+
+rm(list = ls())
+
+
+a<-matrix(NA,1,8) #Creamos la matriz 1x8 (ya que necesitamos 8 valores!), los completamos como NA
+suma20<-0
+
+for(i in 1:8){
+  a[i] <- as.numeric(readline("Ingresar valroes de temperatura : "))
+  if (a[i]>20){
+    suma20<-suma20 + a[i]
+  } 
+} 
+
+print(suma20)
+
+mayores<-a[which(a>20)]      #Los which son las posiciones, entre parentesis lo que queremos que busque, a[] los valores
+print(sum(mayores))          #Sumo todos los valores del vector a, que son mayores a 20
+
+
+#---------------------------------------ej6-------------------------------------------------------------
+########################################################################################################
+#####################################DATA FRAME#########################################################
+########################################################################################################
+########################################################################################################
+########################################################################################################
+
+
+#A partir del archivo "temp bsas.Rdata" con datos de temperatura mensual para 
+#diferentes niveles durante el periodo 2000-2005 sobre la provincia de Buenos
+#Aires. (Cargar el archivo utilizando la funcion "load()")
+
+
+rm(list = ls())
+getwd()
+setwd("D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/Practicas/Practica 3")
+
+#Cargamos el data frame que nos pedian
+
+datos<-load("temp_bsas.Rdata")
+
+#a) Obtener el promedio mensual de temperatura en el periodo analizado para cada
+#nivel y cada punto de reticula. Hagalo por un lado utilizando ciclos y por
+#otro reacomodando el arreglo utilizando la funcion "apply()".
+
+
+#Viendo los datos con
+
+datos_dimensiones
+datos_dimensiones[["time"]]
+
+#Son 6 años x 12 meses x 30 dias 
+
+#Nos piden el promedio MENSUAL en esos 6 años.
+#Usando apply()
+
+#Nos quedamos con longitud, latitud, presion, y transformo el tiempo:
+#12 meses en 6 años
+
+temp_mensual<-array(variable,c(8,14,4,12,6))       #Armo el array para agarrar los datos que necesito
+temp_mensual
+media_mensual<-apply(temp_mensual,c(1,2,3,4),mean) #Dejo fijo todo menos los años
+media_mensual 
+
+#Con ciclos, es masomenos lo que ya hicimos con los ciclos for de recorrer el script
+
+temp_mensual<-array(variable,c(8,14,4,12,6))    
+prom_mensual<-array(NA,c(8,14,4,12))
+
+for (i in 1:8) {
+  for (j in 1:14) {
+    for (k in 1:4) {
+      for (t in 1:12) {  #Uso 12 y no 72 (ya que sino da error). Uso 12 porque son 12 meses
+        prom_mensual[i,j,k,t]<-mean(temp_mensual[i,j,k,t,])
+      }
+      
+    }
+  }
+  
+}
+
+
+prom_mensual==media_mensual #Nos dio todo TRUE asique si, son iguales jaja.
+
+#b) Obtener la temperatura media anual en el periodo analizado para cada nivel
+#y cada punto de reticula.
+
+#Es lo mismo que arriba pero ahora nos piden media anual y no mensual(osea no 12 meses sino 6 años )
+
+
+#Nos quedamos con longitud, latitud, presion, y transformo el tiempo:
+#En 6 años
+
+temp_anual<-array(variable,c(8,14,4,12,6))       #Armo el array para agarrar los datos que necesito
+temp_anual
+media_anual<-apply(temp_anual,c(1,2,3,4),mean) 
+media_anual 
+
+#Con ciclos, es masomenos lo que ya hicimos con los ciclos for de recorrer el script
+
+temp_anual<-array(variable,c(8,14,4,12,6))    
+prom_anual<-array(NA,c(8,14,4,6))
+
+for (i in 1:8) {
+  for (j in 1:14) {
+    for (k in 1:4) {
+      for (t in 1:6) {  #Uso 6 porque el tiempo son 6 años
+        prom_anual[i,j,k,t]<-mean(temp_anual[i,j,k,t,])
+      }
+      
+    }
+  }
+  
+}
+
+
+prom_anual==media_anual #... :C
+
+
+#c)Utilizando la indexaci´on l´ogica seleccione el nivel de 850hPa e imprima por pantalla el promedio
+#de temperatura sobre el dominio para cada a~no
+
+
+prom_anual[,,2,] #Creo que aca estoy seleccionando 850hpa de la variable promedio_anual... osea...esta bien?
+prom_mensual[,,2,]
+
+
+#d) Utilizando la indexacion logica seleccione el punto de reticula mas 
+#cercano a la localidad de Olavarria y obtenga la temperatura promedio para 
+#cada anio en el nivel de 1000hPa.
+
+
+
+
+#---------------------------------------ej7-------------------------------------------------------------
+
+#EJERCICIO 7##########################################################
+
+#El archivo "datos tmedia SABE 2010.txt" contiene la serie de temperaturas 
+#medias diarias de la estacion Aeroparque correspondiente al 2010.
+#Utilizando el comando "scan" cargar los datos en una variable de R.
+#Por ejemplo: TEMP <??? scan( ' d a t o s tmedia SABE 2 0 1 0. t x t ' , sep=" " )
+
+rm(list=ls())
+
+setwd("D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/Practicas/Practica 3")
+load("D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/Practicas/Practica 3")
+
+Temp<-scan ("datos_tmedia_SABE_2010.txt")
+Temp
+
+#Me devuelve 365 dias 
+
+
+#a) Dado que se trata de temperaturas medias diarias para la Ciudad de Buenos
+#Aires, valores superiores a 40C son, muy probablemente, erroneos de acuerdo 
+#con el comportamiento climatogico de esta variable.
+
+#Diseniar y programar un algoritmo que identifique la posicion dentro 
+#de la serie de los dias donde el valor de la temperatura media supera
+#los 40C, pero que ademas muestreel valor del dia anterior y del dia siguiente.
+
+#Obtener la cantidad total de elementos erroneos.
+
+
+#Vamos a encesitar un programa que recorra las variables (ciclo for)y que agarre la variable(which) > 40°C
+#Necesitamos que designe la poscicion...
+#Nos piden la cantidad de datos erroneos tambien...
+
+#La idea va ser hacer un ciclo for que recorra los 365 datos y que si (if) temp[i]>40 me printee lo que piden
+#Piden que diga el dia y la temperatura
+#Piden que diga el dia anterior y la temperatura
+#Piden que diga el dia siguiente y la tempertatura
+
+
+for (i in 1:365) {
+  if(Temp[i]>40) {
+    print(paste("El dia",i,"presenta una T media de",Temp[i],"°C"))
+    print(paste("El dia anterior a",i,"presenta una T media de",(Temp[i-1]),"°C"))
+    print(paste("El dia siguiente a",i,"presenta una T media de",(Temp[i+1]),"°C"))
+  }
+}
+    
+#Este queda medio feo jajaj
+for (i in 1:365) {
+  if(Temp[i]>40) {
+    print(paste("El dia",i,"presenta una T media de",Temp[i],"°C"))
+    print(paste("El dia anterior","," ,"es decir",",","el",i-1,"presenta una T media de",(Temp[i-1]),"°C"))
+    print(paste("El dia siguiente",",","es decir",",","el",i+1,"presenta una T media de",(Temp[i+1]),"°C"))
+  }
+}
+
+
+
+#Finalmente piden la cantidad de datos erroneos
+#Con un lenght para que nos de la caantidad de datos y un which para que agarre y tome los que cumplan esa condicion
+
+print(paste("La cantidad de datos erroreos es : ", length(which(Temp>40))))
+
+#b) Calcular el valor maximo y el minimo de la serie teniendo en cuenta los
+#puntos erroneos y sin tenerlos en cuenta. 
+
+
+#Si tengo en cuenta los datos erroneos
+
+Temp_Max<-max(Temp)
+Temp_Min<-min(Temp)
+
+Temp_Max
+Temp_Min
+
+#Si no tenog en cuenta los datos erroneos tengo que colocar un NA donde haya valores >40C°
+
+Temp2<-replace(Temp,Temp>40, NA)
+Temp2
+
+#Medio una NA -.-
+
+maximo2<-max(Temp2)
+maximo2
+
+#Ahora si
+
+maximo3<-max(Temp2, na.rm = TRUE)
+maximo3
+
+Temp2<-replace(Temp,Temp==-999, NA) #Use -999 porque es el valor que me decia que era min de temperatura
+Temp2
+
+maximo3<-min(Temp2, na.rm = TRUE)
+maximo3
+
+
+#c) Ordenar la serie de menor a mayor y calcular su mediana.
+
+#Para ordenar una serie temporal se usa...
+#sort
+#Le voy a filtrar los datos erroneos, por eso uso Temp2
+
+Temp3<-sort(Temp2)
+Temp3
+
+#Sacamos la mediana como ya sabemos
+
+Mediana_Temp3<-mean(Temp3)
+
+Mediana_Temp3
+
+
+#d) Generar una serie de medias semanales a partir de los datos medios diarios.
+
+#Osea que tenemos que agarrar los 365 datos y dividirlos por 7... da con decimal
+# si hago 7*53 = 371 dias... me sobran 6 dias jeje
+#Les podre poner NA a esos valores que sobran?... diria que si
+
+#Primero armo la matriz
+
+Temp4<-matrix(Temp2,7,53)  #ok, nos da un warning
+Temp4
+
+#hagamos un ciclo for que vaya de 366 (o 367? ahora me fijo. ES 366) hasta el final de Temp4 y llene de NA a medida que avanza
+
+for (i in 366:length(Temp4)) {
+  Temp4[i]<-NA
+}
+Temp4
+
+#Ahora calculamos la media como ya sabemos
+
+Media_Semanal<-mean(Temp4, na.rm = TRUE)
+Media_Semanal
+
+#UPS lo de arriba no funciona porque estoy tomando todo el promedio de todos los datos jajaj
+#Voy a usar apply
+
+#apply(array, margin,function (x), no se como se llama)
+#siendo nuestro array TEMP4, margin = 2 , function (x) = mean , na.rm =true
+
+Media_Semanal<-apply(Temp4, 2,mean,na.rm=TRUE)
+Media_Semanal
+
+
+#e) Dividir el rango de la variable en N intervalos de igual longitud y calcular
+#el numero de elementos de la serie que cae dentro de cada intervalo. Repetir 
+#el ejercicio utilizando la funcion intrinseca "hist".
+
+#WOWOW ESTO TE HACE EL HISTOGRAMA DE UNA. USO TEMP3 QUE TIENE TODO ORDENADO
+hist(Temp3,main="Temperatura media",xlab="Temperatura",plot=T)
+
+#Bueno, ahora a hacerlo de una forma poco eficinete
+#Necesito...
+
+
+#---------------------------------------ej8-------------------------------------------------------------
+
+#EJERCICIO 8
+
+#a) En base al programa anterior, desarrollar una funcion que reciba una serie
+#de longitud N y entregue como resultado su media, valor maximo, valor minimo 
+#y desviacion estandar. Evaluar el desempeno de esta funcion con la serie 
+#utilizada en el ejercicio anterior.
+
+rm(list=ls())
+
+#Nos piden desarrollar UNA FUNCION!! que mida muchas cosas jaja
+
+Estadistica<-function(serie){
+  media<-mean(serie)
+  maximo<-max(serie)
+  minimo<-min(serie)
+  desvio<-sd(serie)
+  return(list(media,maximo,minimo,desvio))
+}
+
+#Creamosuna serie cualqueira de N cantidad de elementos
+  
+serie<-scan()      #Nos permite ingresar valores, la cantidad que querramos y cortamos con doble enter
+Estadistica(serie)  
+  
+
+Estadistica(Temp)  
+  
+#b) Armar una funcion a la que se le ingrese una serie de longitud N y una 
+#cantidad de intervalos I,y que calcule un histograma usando I intervalos
+#iguales que abarquen la totalidad del rango de la serie.
+
+#Para un histograma necesitamos maximo, min, ancho de los intervalos y que se calcule el grafico
+#El ancho es maximo-min/intervalos
+
+Histograma<-function(serieN,intervalos){
+  maximo<-max(serieN,na.rm=T)
+  minimo<-min(serieN,na.rm=T)
+  ancho<-(maximo-minimo)/intervalos
+  grafico<-hist(serieN,intervalos,plot = T)
+  return(grafico)
+  
+}
+
+Histograma(serie,4)
+Histograma(Temp3,11)
+
+
+#---------------------------------------ej9-------------------------------------------------------------
+
+#El archivo t media EF.RData contiene un array de tipo lista con la
+#temperatura media del mes de Enero y Febrero desde 1982 a 2012 para 5 
+#estaciones argentinas (usar la sentencia load("t media EF.RData") para abrirlo). 
+
+#La primera columna del array contiene el nombre de cada estacion, la segunda 
+#contiene la serie para el mes de enero y la tercera para el mes de febrero. 
+#Cada fila del array esta asociada a una estacion:
+
+
+rm(list=ls())
+setwd("D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/Practicas/Practica 3")
+load("t_media_EF.RData")
+
+is.data.frame("t_media_EF.RData")
+is.list("t_media_EF.RData")
+class("t_media_EF.RData")
+
+
+
+#a) Para cada estacion: Obtener la anomalia mensual maxima de enero y el anio
+#en que se alcanzo. Almacenarlo en un data frame donde la primer variable 
+#sea el nombre de cada estacion, la segunda el anio de la anomalia y la tercera
+#dicho valor.
+
+#Tenemos los datos de 5 estaciones
+
+
+#Osea necesitamos sacar las columnas 2:3 (osea enero)
+#La primera columna del array contiene el nombre de cada estacion, la segunda 
+#contiene la serie para el mes de enero y la tercera para el mes de febrero. 
+#Cada fila del array esta asociada a una estacion:
+
+#Hay 31 años de datos
+
+colnames(estaciones)<-c("Estaciones", "Enero", "Febrero")
+rownames(estaciones)<-c("1", "2", "3", "4", "5" )
+
+#Con un cilo for, voy recorriendo esas 5 estaciones y pidiendole todo lo que me pide el enunciado
+#sapply(list, function)
+
+
+for (i in 1:5) {
+  estacion<-sapply(estaciones[i,2:3], mean) #Le pido que me recorra las estaciones 1,2,3,4,5 y que agarre ENE:FEB
+  posicion_anomalia<-
+}
+
+
+#b) Para cada estacion: Calcular la media y el desvio estandard para el mes de
+#febrero. Imprimir luego un cartel que seale para cada estacion en que los anios la
+#temperatura estuvo por encima de la media mas un desvio standar.
+
+
+media<-sapply(estaciones[,3], mean) # columna 3 osea feb
+desvio<-sapply(estaciones[,3], sd)
+
+
+#Con un ciclo for hago que imprima los resultados a medida que va recorriendo las 5 estaciones. 
+#Tenemos 31 datos en Febrero (31 años de datos)
+
+#Inicializamos la variable
+
+anio <- 0
+
+for (i in 1:5){ #las 5 estaciones
+  for (j in 1:31) { #los datos de febrero
+    if (estaciones[[i,3]][j]>(media[i]+desvio[i])) {
+      anio <- 1981+j #desde 1981 en adelante (1982,1983,etc)
+      print(paste("Para la estacion",estaciones[i,1],"la temperatura por encima de la media mas un desvio estandar se alcanzo en el anio",anio))
+    }
+  }
+}
+
+#c) Escribir una funcion que, dado un vector de longitud N con los datos de 
+#temperatura calcule el rango de la serie y la mediana. Utilizar dicha funcion
+#en los datos de enero y guardar los resultados en una nueva matriz que lleve
+#como nombre en cada columna el de cada una de las estaciones.
+
+vector<-c(1,2)
+
+Estadistica<-function(vector){
+  rango<-apply(estaciones, range(vector()))
+  mediana<- apply(list, margin, ...)
+}
+
+
+
+
+
+
+
+
+#---------------------------------------ej10-------------------------------------------------------------
+
+#EJERCICIO 10##########################################################
+
+#Generar una celda con 10 elementos, donde cada elemento sea un nombre propio.
+#Armar una funcion que permita ingresar una lista con nombres (de cualquier 
+#dimension) y una letra, y que devuelva una lista que contenga todos los
+#nombres contenidos en la celda original que comiencen con dicha letra.
+
+
+#Creo un vector con 10 elementos
+
+Nombres<-c(")
+
+
+
