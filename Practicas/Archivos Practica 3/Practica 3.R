@@ -578,6 +578,9 @@ datos<-load("temp_bsas.Rdata")
 
 datos_dimensiones
 datos_dimensiones[["time"]]
+datos_dimensiones[["latitude"]]
+datos_dimensiones[["longitude"]]
+datos_dimensiones[["isobaricInhPa"]]
 
 #Son 6 a?os x 12 meses x 30 dias 
 
@@ -587,10 +590,19 @@ datos_dimensiones[["time"]]
 #Nos quedamos con longitud, latitud, presion, y transformo el tiempo:
 #12 meses en 6 a?os
 
-temp_mensual<-array(variable,c(8,14,4,12,6))       #Armo el array para agarrar los datos que necesito
+#Tenemos 72 tiempos. No nos sirve esto, pero si nos sirve 12 meses y 6 aÃ±os ("por separado, entocnes armo un array con eso)
+
+temp_mensual<-array(variable,c(8,14,4,12,6))       #Armo el array para agarrar los datos que necesito. 12 meses, 6 aÃ±os. La dim 4 son los meses y la dim 5 son los aÃ±os
 temp_mensual
-media_mensual<-apply(temp_mensual,c(1,2,3,4),mean) #Dejo fijo todo menos los a?os
+# E1 E2 E3 ..
+# F1 F2 F3 ..
+# ..
+media_mensual<-apply(temp_mensual,c(1,2,3,4),mean) #Esto toma los datos de la dim 1,2,3,4 (longitud,latitud,presion, MESES , AÃ‘O). la dim 5 no la usamos, chau
 media_mensual 
+
+#Si quiseramos la media estacional o lo que sea, seria lo mismo pero dividiendo con cudiado los 72 datos. Las ultimas son
+#meses y aÃ±os, asique ahi esta la cosa
+
 
 #Con ciclos, es masomenos lo que ya hicimos con los ciclos for de recorrer el script
 
@@ -601,7 +613,7 @@ for (i in 1:8) {
   for (j in 1:14) {
     for (k in 1:4) {
       for (t in 1:12) {  #Uso 12 y no 72 (ya que sino da error). Uso 12 porque son 12 meses
-        prom_mensual[i,j,k,t]<-mean(temp_mensual[i,j,k,t,])
+        prom_mensual[i,j,k,t]<-mean(temp_mensual[i,j,k,t,])     #Dejo la ultima dim vacia porque son aÃ±os y solo quiero completar con los meses osea con t que va desde 1 a 12
       }
       
     }
@@ -610,7 +622,7 @@ for (i in 1:8) {
 }
 
 
-prom_mensual==media_mensual #Nos dio todo TRUE asique si, son iguales jaja.
+prom_mensual==media_mensual #Nos dio todo TRUE asique si, son iguales...creo
 
 #b) Obtener la temperatura media anual en el periodo analizado para cada nivel
 #y cada punto de reticula.
@@ -623,7 +635,7 @@ prom_mensual==media_mensual #Nos dio todo TRUE asique si, son iguales jaja.
 
 temp_anual<-array(variable,c(8,14,4,12,6))       #Armo el array para agarrar los datos que necesito
 temp_anual
-media_anual<-apply(temp_anual,c(1,2,3,4),mean) 
+media_anual<-apply(temp_anual,c(1,2,3,5),mean) #Sacame el promedio PERO de la dim 4 que son los aÃ±os. La 4 son los meses que no queremos jaja
 media_anual 
 
 #Con ciclos, es masomenos lo que ya hicimos con los ciclos for de recorrer el script
@@ -635,7 +647,7 @@ for (i in 1:8) {
   for (j in 1:14) {
     for (k in 1:4) {
       for (t in 1:6) {  #Uso 6 porque el tiempo son 6 a?os
-        prom_anual[i,j,k,t]<-mean(temp_anual[i,j,k,t])
+        prom_anual[i,j,k,t]<-mean(temp_anual[i,j,k,,t]) #Dejo la dim 4 (MESES en blanco) Solo necesito que me complete la variable t, en la dim 6, osea aÃ±os
       }
       
     }
@@ -644,15 +656,32 @@ for (i in 1:8) {
 }
 
 
-prom_anual==media_anual #... :C
+prom_anual==media_anual #... :C... actualizacion, funciona c:
 
 
 #c)Utilizando la indexaci?on l?ogica seleccione el nivel de 850hPa e imprima por pantalla el promedio
 #de temperatura sobre el dominio para cada a~no
 
+#Agarro la dimension que me interesa. osea me hablan de presion.
+#EN nuestro array la dim 3 es la de presion
+datos_dimensiones[["isobaricInhPa"]]
 
-prom_anual[,,2,] #Creo que aca estoy seleccionando 850hpa de la variable promedio_anual... osea...esta bien?
-prom_mensual[,,2,]
+#La indexacion logica es
+
+datos_dimensiones[["isobaricInhPa"]] == 850
+#Which indexa por posicion osea 2 en este caso. Logicamente, es con FALSE TRUE FALSE FALSE ... etc
+#La posicion 2 es la que nos interesa, la dejo fija
+
+which(datos_dimensiones[["isobaricInhPa"]] == 850)
+prom_anual[,,which(datos_dimensiones[["isobaricInhPa"]] == 850),]
+dim(prom_anual[,,which(datos_dimensiones[["isobaricInhPa"]] == 850),]) #Creo que aca estoy seleccionando 850hpa de la variable promedio_anual... osea...esta bien?
+
+Tiempo_meses_anios_850 <-prom_anual[,,which(datos_dimensiones[["isobaricInhPa"]] == 850),]
+dim(Tiempo_meses_anios_850) #Me quedo dim 3 (porque me quede con los valores de 850 hpa, soea chau esa dimension = 1)
+
+medias_anuales_850_dominio <- apply(Tiempo_meses_anios_850, c(3), mean, na.rm = TRUE) #Sacame el promeddio de esas 3 dimensiones que quedaron
+
+print(medias_anuales_850_dominio)
 
 
 #d) Utilizando la indexacion logica seleccione el punto de reticula mas 
@@ -660,13 +689,44 @@ prom_mensual[,,2,]
 #cada anio en el nivel de 1000hPa.
 
 #Coordenadas de Olavarria(internet):
-#Longitud: Oeste 60°19'
-#Latitud: Sur 36°53'
+#Longitud: Oeste 360-60.32'(-60.32)
+#Latitud: Sur 36?89'  (-36.89 )
 
 datos_dimensiones$longitude
 datos_dimensiones$latitude
 
+#ES utilizando indexacion logica, osea nada de which
+#La indexacion logica es
+#datos_dimensiones[["isobaricInhPa"]] == 850 asi nos da TRUE FALSE FALSE TRUE BLA BLA BLA
 
+datos_dimensiones[["latitude"]] == -60#ESto va en la segunda dim de nuestra variable
+datos_dimensiones[["longitude"]] == -36.75 #ESto va en la primer dim de nuestra variable
+datos_dimensiones[["isobaricInhPa"]] == 1000 #ESto va en la tercer dim de nuestra variable
+                                             # la cuarta dim, queda asi. COmo esta en aÃ±os
+
+#Todo muy lindo pero algo anda mal jajaja. La idea safa pero supongo que tengo que encontrar la forma de que me encunetre el valor mas cercano a
+#Coordenadas de Olavarria(internet):
+#Longitud: Oeste 360-60.32'(-60.32)
+#Latitud: Sur 36?89'  (-36.89 )
+
+
+Latitud_Olavarria<- -36.89 
+J<-datos_dimensiones$latitude-Latitud_Olavarria 
+J<-abs(J)
+Valor_cercano_LatitudOL<-which.min(J)
+
+Longitud_Olavarria<- 360-60.32
+f<-datos_dimensiones$longitude-Longitud_Olavarria 
+f
+f<-abs(f)
+Valor1_cercano_LongitudOL<-which.min(f)
+
+
+#Despues la idea calculo que seria, tomar de proedio anual que ya tenia cargado el array con 6 aÃ±os, tomo la longitud,latitud y presion que quiero
+
+prom_anual[Valor1_cercano_LongitudOL,Valor_cercano_LatitudOL,(datos_dimensiones[["isobaricInhPa"]] == 1000),]
+
+dim(prom_anual[Valor1_cercano_LongitudOL,Valor_cercano_LatitudOL,(datos_dimensiones[["isobaricInhPa"]] == 1000),])
 
 #---------------------------------------ej7-------------------------------------------------------------
 
@@ -891,12 +951,12 @@ for(i in 1:length(Temp3)){
     i9=i9+1
   }
 }
-{print(paste0("Cantidad de valores entre 5°C y 6°C: ",i1))
-  print(paste0("Cantidad de valores entre 6°C y 7°C: ",i2))
-  print(paste0("Cantidad de valores entre 7°C y 8°C: ",i3))
-  print(paste0("Cantidad de valores entre 8°C y 9°C: ",i4))
-  print(paste0("Cantidad de valores entre 9°C y 10°C: ",i5))
-  print(paste0("Cantidad de valores entre 10°C y 11°C: ",i6))
+{print(paste0("Cantidad de valores entre 5?C y 6?C: ",i1))
+  print(paste0("Cantidad de valores entre 6?C y 7?C: ",i2))
+  print(paste0("Cantidad de valores entre 7?C y 8?C: ",i3))
+  print(paste0("Cantidad de valores entre 8?C y 9?C: ",i4))
+  print(paste0("Cantidad de valores entre 9?C y 10?C: ",i5))
+  print(paste0("Cantidad de valores entre 10?C y 11?C: ",i6))
   print(paste0("Valores totales: ",i1+i2+i3+i4+i5+i6))
 }
 
@@ -1072,7 +1132,7 @@ for (i in 1:5) {
   estacion_prom<-sapply(estaciones[i,2:3], mean) #Recorre las estaciones 1,2,3,4,5 y que agarra ENE:FEB y me saca el promedio
   anomalia_ENE<-(estaciones[[i,2]]-estacion_prom[1]) #Agaramos los datos de las estaciones 1 hasta la 5, fijamos la columna 2 y le restamos su media
   anomaliaMax_ENE<-which.max(abs(anomalia_ENE)) #Nos va a decir la posicion de la anomalia
-  anomaliaMax_ENE_anio[i]<-1981 + anomaliaMax_ENE  #Nos da el año
+  anomaliaMax_ENE_anio[i]<-1981 + anomaliaMax_ENE  #Nos da el a?o
   anomalias_max_valor[i]<-(anomalia_ENE[anomaliaMax_ENE]) #Recorre las estaciones 1 a 5 y nos da el valor que estaba en la posicion de la anomalia
   nombre_estacion[i]<-estaciones[[i,1]]
 }
