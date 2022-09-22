@@ -1,5 +1,3 @@
-
-
 #####################Practica 3##########################################
 rm(list = ls())
 setwd("D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/Practicas")
@@ -202,8 +200,8 @@ m2
 m3<-matrix(NA,nrow(m1),ncol(m2)) #Genero una variable que me guarde las matrices m1 y m2 
 m3
 
-for(i in 1:nrow(m1)){    #Recorro filas de A
-  for(l in 1:ncol(m2)){  #Recorro columnas de B
+for(i in 1:nrow(m1)){    #Recorro filas de m1
+  for(l in 1:ncol(m2)){  #Recorro columnas de m2
     m3[i,l]=sum(m1[i,1:ncol(m1)]*m2[1:nrow(m3),l])  #Realizo el producto matricial
   }
 }
@@ -308,6 +306,62 @@ proc.time()-t
 
 #e) Al programa del ejercicio anterior agregar una secci?on que identifique las componentes negativas
 #del producto de ambas matrices y las convierta en cero.
+
+rm(list = ls())
+
+#defino la matriz m1 y m2
+m1<-matrix(1:4,2,2)#Creo una matriz de 2x2
+m1 
+m2<-matrix(5:8,2,2)#Creo una matriz de 2x2
+m2
+m3<-matrix(NA,nrow(m1),ncol(m2)) #Genero una variable que me guarde las matrices m1 y m2 
+m3
+
+m1<-matrix(-1:2,2,2)#Creo una matriz de 2x2 #Prueba que me transforme los valores negativos en 0
+
+                     
+{replace (m1,m1<0,0)} #replace(de m1, agarrame los valores que en m1 son menores a 0 y reemplazalos por 0)
+{replace (m2,m2<0,0)} 
+M=matrix(NA,nrow(m1),ncol(m2)) #Me genero la matriz como antes
+
+if(ncol(m1)==nrow(m2)){         #si tiene el mismo numero de columnas, entoces haceme la cuenta. SINO printiame u nmsj de error)
+  for(i in 1:nrow(m1)){
+    for(l in 1:ncol(m2)){
+      m3[i,l]=sum(m1[i,1:ncol(m1)]*m2[1:nrow(m2),l])
+    }
+  }
+}else{print("Las dimensiones no son compatibles")}
+
+print(m3)
+print(m1%*%m2)
+
+
+#para el item b seria lo mismo pero con DIM
+
+rm(list = ls())
+m1<-matrix(1:4,2,2)#Creo una matriz de 2x2
+m1 
+m2<-matrix(5:8,2,2)#Creo una matriz de 2x2
+m2
+m1xm2<-matrix(0,nrow(m1),ncol(m2)) #Genero una variable que me guarde las matrices m1 y m2 
+m1xm2
+
+m1<-matrix(-1:1,1,1)#Creo una matriz de 2x2 #Prueba para que de error
+       
+{replace (m1,m1<0,0)} #replace(de m1, agarrame los valores que en m1 son menores a 0 y reemplazalos por 0)
+{replace (m2,m2<0,0)} 
+m1xm2=matrix(0,nrow(m1),ncol(m2)) #Me genero la matriz como antes
+
+if(dim(m1)==dim(m2)){         #si tiene el mismo numero de columnas, entoces haceme la cuenta. SINO printiame u nmsj de error)
+  for(i in 1:nrow(m1)){    #Recorro filas de m1
+    for(j in 1:ncol(m2)){  #Recorro columnas de m2
+      m1xm2[i,j]=m1[i,j]*m2[i,j]  #Realizo el producto componente a componente
+    }
+  }
+}else{print("Las dimensiones no son compatibles")}
+
+print(m1xm2)
+print(m1*m2)
 
 
 
@@ -581,7 +635,7 @@ for (i in 1:8) {
   for (j in 1:14) {
     for (k in 1:4) {
       for (t in 1:6) {  #Uso 6 porque el tiempo son 6 a?os
-        prom_anual[i,j,k,t]<-mean(temp_anual[i,j,k,t,])
+        prom_anual[i,j,k,t]<-mean(temp_anual[i,j,k,t])
       }
       
     }
@@ -605,6 +659,12 @@ prom_mensual[,,2,]
 #cercano a la localidad de Olavarria y obtenga la temperatura promedio para 
 #cada anio en el nivel de 1000hPa.
 
+#Coordenadas de Olavarria(internet):
+#Longitud: Oeste 60°19'
+#Latitud: Sur 36°53'
+
+datos_dimensiones$longitude
+datos_dimensiones$latitude
 
 
 
@@ -703,8 +763,11 @@ maximo3
 Temp2<-replace(Temp,Temp==-999, NA) #Use -999 porque es el valor que me decia que era min de temperatura
 Temp2
 
-maximo3<-min(Temp2, na.rm = TRUE)
-maximo3
+minimo3<-min(Temp2, na.rm = TRUE)
+minimo3
+
+Temp2
+Temp2<-replace(Temp2,Temp>40, NA);replace(Temp2,Temp==-999, NA)
 
 
 #c) Ordenar la serie de menor a mayor y calcular su mediana.
@@ -760,13 +823,82 @@ Media_Semanal
 #el numero de elementos de la serie que cae dentro de cada intervalo. Repetir 
 #el ejercicio utilizando la funcion intrinseca "hist".
 
-Histograma<- function()
 
 #WOWOW ESTO TE HACE EL HISTOGRAMA DE UNA. USO TEMP3 QUE TIENE TODO ORDENADO
 hist(Temp3,main="Temperatura media",xlab="Temperatura",plot=T)
 
 #Bueno, ahora a hacerlo de una forma poco eficiente
 #Necesito...
+
+Temp3
+
+#Necesito un rango, osea Rango<-Temp_Max-Temp_min
+#Cantdad de intervalos q<-5*log(N) (N=cantidad total de datos. osea lenght(Temp3)
+#Ancho de intervalo a = rango/q
+
+N<-length(Temp3)
+range(Temp3,na.rm = TRUE)
+q<-5*log(length(Temp3)) #casi 30 intervalos
+a<-(30.27-5.4)/q
+
+#Me canse, creo que no era asi jajaja
+
+
+for(i in 1:length(Temp3)){
+  if (Temp3[i]>=5 & Temp3[i]<6){
+    i1=i1+1
+  }else if (Temp3[i]>=6 & Temp3[i]<7){
+    i2=i2+1
+  }else if (Temp3[i]>=7 & Temp3[i]<8){
+    i3=i3+1
+  }else if (Temp3[i]>=8 & Temp3[i]<9){
+    i4=i4+1
+  }else if (Temp3[i]>=9 & Temp3[i]<10){
+    i5=i5+1
+  }else if (Temp3[i]>=10 & Temp3[i]<11){
+    i6=i6+1
+  }else if (Temp3[i]>=11 & Temp3[i]<12){
+    i7=i7+1
+  }else if (Temp3[i]>=12 & Temp3[i]<13){
+    i8=i8+1
+  }else if (Temp3[i]>=13 & Temp3[i]<14){
+    i9=i9+1
+  }else if (Temp3[i]>=13 & Temp3[i]<14){
+    i10=i10+1
+  }else if (Temp3[i]>=13 & Temp3[i]<14){
+    i9=i9+1
+  }else if (Temp3[i]>=13 & Temp3[i]<14){
+    i9=i9+1
+  }else if (Temp3[i]>=13 & Temp3[i]<14){
+    i9=i9+1
+  }else if (Temp3[i]>=13 & Temp3[i]<14){
+    i9=i9+1
+  }else if (Temp3[i]>=13 & Temp3[i]<14){
+    i9=i9+1
+  }else if (Temp3[i]>=13 & Temp3[i]<14){
+    i9=i9+1
+  }else if (Temp3[i]>=13 & Temp3[i]<14){
+    i9=i9+1
+  }else if (Temp3[i]>=13 & Temp3[i]<14){
+    i9=i9+1
+  }else if (Temp3[i]>=13 & Temp3[i]<14){
+    i9=i9+1
+  }else if (Temp3[i]>=13 & Temp3[i]<14){
+    i9=i9+1
+  }else if (Temp3[i]>=13 & Temp3[i]<14){
+    i9=i9+1
+  }else if (Temp3[i]>=13 & Temp3[i]<14){
+    i9=i9+1
+  }
+}
+{print(paste0("Cantidad de valores entre 5°C y 6°C: ",i1))
+  print(paste0("Cantidad de valores entre 6°C y 7°C: ",i2))
+  print(paste0("Cantidad de valores entre 7°C y 8°C: ",i3))
+  print(paste0("Cantidad de valores entre 8°C y 9°C: ",i4))
+  print(paste0("Cantidad de valores entre 9°C y 10°C: ",i5))
+  print(paste0("Cantidad de valores entre 10°C y 11°C: ",i6))
+  print(paste0("Valores totales: ",i1+i2+i3+i4+i5+i6))
+}
 
 
 #---------------------------------------ej8-------------------------------------------------------------
@@ -861,37 +993,94 @@ rownames(estaciones)<-c("1", "2", "3", "4", "5" )
 #sapply(list, function)
 
 
+#Algunas pruebas previas al ciclo for
+
+
+estaciones[[1,2]] #Nos da los datos de buenos aires en ENERO
+estaciones[[2,2]] #idem pero de Viedma
+
+estaciones[1,2:3] # Nos da los datos de buenos aires en ENERO Y FEBRERO
+
+estacion_prom<-sapply(estaciones[1,2:3], mean) #Saca el promedio de lo de arriba
+estacion_prom
+
+#La anomalia es promedio - datos
+
+anomalia_ENE<-(estaciones[[1,2]]-estacion_prom[1])
+anomalia_ENE                                      #Ahi esta, la anomalia
+
+
+#Nos piden la "Obtener la anomalia mensual maxima de enero"
+
+#Entonces necesitamos la maxima anomalia en MODULO porque veo que hay valroes negativos y positivos
+#Mientras estaba haciendo pruebas me sugirio una "which.max", que piola, justo lo que necesitaba
+
+anomaliaMax_ENE<-which.max(abs(anomalia_ENE))
+anomaliaMax_ENE #Okey, esta en la posicion 7
+
+#nos piden "el anio en que se alcanzo"
+#Bueno...algo mas?
+#Facil, inicialmente estamos en 1981 (posicion 0) + anomaliaMax_ENE (en este caso 7) 
+#osea 1981+7 = 1988 listo!!
+
+anomaliaMax_ENE_anio<-1981 + anomaliaMax_ENE
+anomaliaMax_ENE_anio
+
+
+#Nos piden el valor de es anomalia... bueno dale
+#Me falto inicializar la variable
+
+anomalias.max.valor<-c()
+
+anomalias.max.valor[1]<-(anomalia_ENE[anomaliaMax_ENE])
+
+anomalias.max.valor[1] #Perfecto, este es el valor de la anomalia
+
+
+#Listo, ahora todo en un data frame
+
+Datos_Estaciones<-data.frame("Nombre Estacion" , "Anio de anomalia" , "Valor de anomalia")
+Datos_Estaciones
+
+nombre[1]
+
+anomalias.max.valor<-c()
+nombre<-estaciones[[1,1]] 
+nombre
+
+nombre<-estaciones[[2,1]]
+nombre
+
+mi_df <- data.frame("Nombre Estacion" = nombre_estacion, "Anio de anomalia" = anomaliaMax_ENE_anio, "Valor de anomalia" = anomalias_max_valor)
+#############################################################################################################################################
+#############################################################################################################################################
+#############################################################################################################################################
+#############################################################################################################################################
+#Ahora si, todo en un for
+
+rm(list=ls())
+setwd("D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/Practicas/Practica 3")
+load("t_media_EF.RData")
+
+anomalias.max.valor<-c()
+nombre_estacion<- 0
+anomalias_max_valor<-0
+anomaliaMax_ENE_anio<-0
+
+
 for (i in 1:5) {
-  estacion_promENE<-sapply(estaciones[i,2:3], mean) #Le pido que me recorra las estaciones 1,2,3,4,5 y que agarre ENE:FEB
-  anomalia<-
-    
-  Data_Frame<-data.frame(row.names ="Nombre Estacion" ,row.names = "Anio de anomalia"  , row.names = "Valor de anomalia")
+  estacion_prom<-sapply(estaciones[i,2:3], mean) #Recorre las estaciones 1,2,3,4,5 y que agarra ENE:FEB y me saca el promedio
+  anomalia_ENE<-(estaciones[[i,2]]-estacion_prom[1]) #Agaramos los datos de las estaciones 1 hasta la 5, fijamos la columna 2 y le restamos su media
+  anomaliaMax_ENE<-which.max(abs(anomalia_ENE)) #Nos va a decir la posicion de la anomalia
+  anomaliaMax_ENE_anio[i]<-1981 + anomaliaMax_ENE  #Nos da el año
+  anomalias_max_valor[i]<-(anomalia_ENE[anomaliaMax_ENE]) #Recorre las estaciones 1 a 5 y nos da el valor que estaba en la posicion de la anomalia
+  nombre_estacion[i]<-estaciones[[i,1]]
 }
+  
+Datos_Estaciones<-data.frame("Nombre Estacion" = nombre_estacion, "Anio de anomalia" = anomaliaMax_ENE_anio, "Valor de anomalia" = anomalias_max_valor )
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Datos_Estaciones
 
 
 
@@ -924,7 +1113,7 @@ for (i in 1:5){ #las 5 estaciones
 #c) Escribir una funcion que, dado un vector de longitud N con los datos de 
 #temperatura calcule el rango de la serie y la mediana. Utilizar dicha funcion
 #en los datos de enero y guardar los resultados en una nueva matriz que lleve
-#como nombre en cada columna el de cada una de las es taciones.
+#como nombre en cada columna el de cada una de las estaciones.
 
 vector<-c(1,2)
 
@@ -933,11 +1122,30 @@ Estadistica<-function(vector){
   mediana<- apply(list, margin, ...)
 }
 
+vector<- c(1,2)
+
+Estadistica<-function(vector){
+  Data_Frame<-data.frame("No se" = c(vector))
+  Mediana<-median(c(vector))
+  Rango<-range(c(vector))
+  Data_Frame$Mediana<- Mediana
+  Data_Frame$Rango<-Rango
+}
+
+Estadistica(vector)
+Data_Frame
 
 
+funcion_2<-function (vector1,vector2,Character=c("Fila 1","Fila 2","Fila 3","Fila 4")){
+  Data_Frame<-data.frame("Base" = c(vector1),"Altura"= c(vector2))
+  rownames(Data_Frame)<-c(Character)
+  sup <- Data_Frame$Base * Data_Frame$Altura
+  Data_Frame$Superficie <- sup
+  return(Data_Frame)
+  
+}
 
-
-
+funcion_2(c(1,2,3,4),c(1,2,3,4),c("hola","hola2","hola3","hola4"))
 
 
 #---------------------------------------ej10-------------------------------------------------------------
@@ -952,7 +1160,163 @@ Estadistica<-function(vector){
 
 #Creo un vector con 10 elementos
 
-Nombres<-c(")
+nombres<-c("Estaciones", "Enero", "Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre")
+
+
+#Nos piden que hagamos uan funcion en donde
+#Generemos una lista con 10 elementos (nombres, de cualquier dimension)
+#Debe devolver una lista con todos los nombres en la celda original que comiencen co ndicha letra
+#Osea que si en mi lista meti un April e inregse la letra A, me tiene que devovler esa palabra y cualquiero otra que emepiece con A (agosto tambien)
+
+
+
+#Aramar la funcion es facil
+
+funcion<-function(nombres,letra){
+}
+#Pido que se almacene en una lista la variable que vamos a crear
+  
+funcion<-function(nombres,letra){
+nombres_letra<-list() #(1)
+}
+
+#Voy a necesitar un ciclo for que me recorrar toda la lista
+
+for (i in 1:length(nombres))
+
+funcion<-function(nombres,letra){
+    nombres_letra<-list()
+    for (i in 1:length(nombres)){}
+  }
+
+#Quiero que me extraiga de cada iteracion la primera letra, SI coincide con la segunda variable ingresada en la funcion
+#SINO quiere decir que no hay nombres en la lista que empeicen con la letra indicada
+#osea
+
+#Me costo una banda la sintaxis pero ahi esta, esto me saca la primera letra de ESTACION y la otr DE Febrero
+#Substr(Variable_a_extraer [Item de la lista,primera letra, hasta primera letra])
+
+substr(nombres [1],1,1)
+substr(nombres [3],1,1)
+
+
+#Bueno, le pido que si es igual a la eltra ingresada entonces me lo guarde 
+if(substr(nombres[1],1,1)== (letra)){
+}
+
+
+#Ahora si hago la funcion. Capaz tengo que agregarle cosas
+
+#(1) Ingresamos la lista que me pide el enunciado
+#(2) Se inicia el contador en el primer elemento de la lista
+#(3) Me muevo desde 1 hasta el numero que represente la longitud del vector
+#(4) #Si la primer letra de cada nombre substr(nombres[i],1,1)) es igual al
+#igual a la letra que el usuario ingreso, entonces empieza a alamcenar en un vector
+#(5) Almaceno el resultado
+
+funcion<-function(nombres,letra){
+  nombres_letra<-list() #(1)
+  j<-1 #(2)
+  for (i in 1:length(nombres)){ #(3)
+    if ((substr(nombres[i],1,1)) == (letra)){ #(4)
+      nombres_letra[[j]]<-nombres[i]
+      j=j+1                          #Para que recorra todo
+    }
+  }
+  return(nombres_letra) #(5)
+}
+
+#Pruebo el resultado 
+
+funcion(nombres,"Y") #Bien, me da la lista vacia
+funcion(nombres,"E") #BIEN
+
+#---------------------------------------ej11-------------------------------------------------------------
+
+
+
+#Se cuenta con seis archivos de datos correspondientes a valores medios diarios
+#de temperatura, temperatura de rocio y presion reducida a nivel del mar para 
+#las estaciones Azul, Catamarca, Aeroparque, Chilecito, Iguazu y Mendoza.
+#Los datos faltantes de temperatura estan codificados con el valor 999.9.
+#Los valores de temperatura estan en grados Farenheit.
+
+setwd("D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/Practicas/Practica 3")
+rm(list=ls())
+
+#Cargamos los datos
+
+{
+  Azul<-read.table("AZUL.txt")
+  Catamarca<-read.table("CATAMARCA.txt")
+  Aeroparque<-read.table("AEROPARQUE.txt")
+  Chilecito<-read.table("CHILECITO.txt")
+  Mendoza<-read.table("MENDOZA.txt")
+  Iguazu<-read.table("IGUAZU.txt")
+  informacion<-read.table("estaciones.txt")
+}
+
+#a) Armar un array de listas que contenga los datos correspondientes a cada 
+#estacion como asi tambien informacion asociada a cada estacion en particular:
+#nombre, latitud, longitud, altura y codigo de identificacion. Convertir los 
+#valores de temperatura y temperatura de rocio a grados centigrados.
+#La informacion sobre la ubicacion de cada estacion esta disponible en el archivo
+#estaciones.txt.
+
+
+
+
+
+
+
+
+
+
+
+
+
+#---------------------------------------ej12-------------------------------------------------------------
+
+
+setwd("D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/Practicas/Practica 3")
+rm(list=ls())
+
+#Cargo los datos
+
+#El archivo presiondesaturacion.txt contiene dos columnas, una con datos de 
+#temperatura (???C) y la segunda con valores de presion de saturacion para el
+#vapor de agua (hPa) correspondientes a dichas temperaturas. 
+
+
+PresionDeSaturacion<-read.table("presiondesaturacion.txt")
+
+
+#Armar una funcion
+#de R que dada una temperatura obtenga el valor de presion de saturacion
+#interpolado linealmente al valor de temperatura deseado a partir de los datos
+#presentes en el archivo. Hacer que la funcion muestre un mensaje 
+#advertencia y termine correctamente en el caso de que el valor de temperatura 
+#indicado este fuera del rango abarcado por la tabla. Comparar los resultados
+#utilizando la funcion intrinseca interp1 de R
+
+
+#Hacer que la funcion muestre un mensaje 
+#advertencia y termine correctamente en el caso de que el valor de temperatura 
+#indicado este fuera del rango abarcado por la tabla.
+
+#Facil, literal es hacer lo que me piden
+
+if(t<min(serie)|t>max(serie)){
+  warning("El valor ingresado de temperatura esta fuera del rango de datos")
+}
+
+#necesitamos ingresar 2 parametros, los datos y una temperaturas
+
+
+Presion_Saturacion<-function(serie,t)
+
+
+
 
 
 
