@@ -1,0 +1,7 @@
+NOMBRE	EDAD	ALTURA	PESO
+Alfredo	33	1,8	68
+Marcelo	21	1,6	58
+Pedro	56	1,7	79
+Maria	NA	1,5	56
+Marta	67	1,7	80
+Moria	32	1,6	78
