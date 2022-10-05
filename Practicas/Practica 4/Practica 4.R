@@ -67,6 +67,23 @@ Tabla3<-read.table(datos,nrows = 20,ncols=3)
 Tabla3<-read.table(datos,nrows = 20,nmax=60)
 Tabla3<-read.table(datos,nrows = 20)
 
+#Bueno, en la teorica encontre esto:
+#                  Cargar datos - read.fwf
+#Lee una tabla con datos de formato ancho fijo y lo convierte en un data.frame.
+#Los records de más de una línea son concatenados a una sola línea antes de ser procesados.
+         #read.fwf(file, widths, header = FALSE, sep = "\t",
+         #skip = 0, row.names, col.names, n = -1,
+         #buffersize = 2000, fileEncoding = "", ...)
+#widths: un vector entero que contiene los anchos de los campos (de una línea) o
+#una lista de vectores enteros que contiene los anchos de varias líneas
+#Colocar un valor negativo indica la cantidad de columnas que se deben saltear,
+#e.g., -5 saltear 5 columnas.
+
+tabla3<-read.fwf(datos, nrows=20, widths = c(6:6))
+tabla4<-read.fwf(datos, nrows=20, widths = c(6:10))
+tabla5<-read.fwf(datos, nrows=20, widths = c(2:6))
+
+
 #EJERCICIO 2##########################################################
 
 #El archivo datos gts.txt contiene datos de estaciones. Visualizar el archivo 
@@ -95,19 +112,14 @@ tabla1
 
 Estaciones<-function(tabla1){
   Lista<-list()
-  Estaciones<-tabla1[[1]]  #En estaciones, guardo todos los nombres que hay en la columna 1
+  estaciones<-tabla1[[1]]  #En estaciones, guardo todos los nombres que hay en la columna 1
   for (i in 1:length(Estaciones)) {  #Recorre de 1 hasta la longitud de ESTACIONES = 801
     
-  }
 }
-
 
 #b) Escribir esta lista en un archivo ascii en dos columnas donde la primera es 
 #el nombre de la estación y la segunda es la cantidad de datos. Incluir un 
 #encabezado que indique que es cada columna.
-
-
-
 
 
 
@@ -172,12 +184,90 @@ tabla1[is.na(tabla1)]=-999.9 # asignar un codigo de -999 a los datos faltantes.
 #en el archivo.
 
 #????
+#Me robe todo de https://slideplayer.com.br/slide/1257412/
+#La numero 14, tiene una formula linda y usable para este caso
+
+#H = RT/g
+#Z2-Z1 = Hln(p1/p2)
+#osea
+
+#Z2 = (((R*(t1+t2))/g))*ln((p1)/(p2))+Z1
+
+#Z2 es la altura geo potencial
+#Z1 es la altura inicial...creo
+#T es la suma de t1 y t2 en grados KELVIN
+#R 287 #J/kg.K
+#P1 es la presion a nivel del mar
+#p2 es la presion medida en la estacion
+#g es la aceleracion de la gravedad
+#H es una altura
+
+#Bien, armamos la funcion que me pida valores de
+#t1,t2,p1,p2,z1 y que asigne a variables que ya son fijas un valor
+#osea #R 287 #J/kg.K y g<- 9.8 mts/seg2
+#Las temp necesitan estar en KELVIN asi que hacemos
+#t<-t1+273.15
+
+#Una vez hecho esto, le pedimo a la funcion que haga el calculo con la formula
+#que puse arriba
+#   Z2 = (((R*(t1+t2))/g))*ln((p1)/(p2))+Z1
+
+altura_geopotencial<-function(t1,t2,p2,z1){
+  t1<-t1+273.15
+  t2<-t2+273.15
+  R<- 287
+  g<- 9.8
+  p1<-1013.25
+  z1<-0
+  Z2 <- ((((R*(t1+t2))/g))*log((p1)/(p2))+z1) 
+}
+
+#Necesito que no me haga las operaciones con -999 que es el valor que les di a los datos faltantes... gracias punto a) -.-
+
+tabla1<-read.table(datos, header=FALSE, sep = ",",strip.white = TRUE, na.strings = "//")
+tabla1
+
+tabla1[is.na(tabla1)]=NA
+
+#Ahora necesito hacer una pruebas... porque me piden que con la tabla, use la funcion y calcule las alturas geopotenciales
+
+p2<-matrix(tabla1[,1],ncol=1)
+P2
+t1<-matrix(tabla1[,2],ncol=1)
+t1
+t2<-matrix(tabla1[,3],ncol=1)
+t2
+
+#Para que me reccora cada valor deberia hacer algo asi tabla[i,1], fijo la primera columna y que se vaya iterando cada fila
+altura<-0
+
+for (i in 1:nrow(tabla1)) {
+  altura[i]<-altura_geopotencial(tabla1[i,2],tabla1[i,3],tabla1[i,1])
+}
+  print(altura)
+
+Altura_Geopotencial<-matrix(altura,ncol = 1)
+Altura_Geopotencial
 
 #c) Generar un nuevo archivo ascii en donde se incluya toda la informacion
 #contenida en el archivo sondeo.txt, pero ademas que incluya una nueva columna 
 #con los valores calculados de altura geopotencial.
 
 
+#Mando esa nueva matriz que cree a la tabla 
+
+tabla1[,4]<-Altura_Geopotencial
+tabla1
+
+#Si algun dia lo abro, mejor saber que son todos esos numeros
+colnames(tabla1)=c("Presion","T1","T2","Altura Geopotencial")
+tabla1
+
+
+write.table(tabla1,file = "Ej_3.txt",sep=" ")
+tabla2<-read.table("Ej_3.txt", header=TRUE, sep = " ")
+
+#Listo
 
 #EJERCICIO 4##########################################################
 
@@ -257,6 +347,16 @@ DataFrame_B
 #LISTO
 
 
+
+
+
+
+
+
+#################################################################################################################################################
+#################################################################################################################################################
+
+
 #Ejercicio 5
 #El archivo modelo.grd es un archivo binario, little endian de acceso directo con precisi ??on
 #simple (su correspondiente ctl es modelo.ctl). Dicho archivo almacena las siguientes variables:
@@ -270,6 +370,7 @@ DataFrame_B
 #d) Calcular el promedio zonal de U en 850hPa cada 10 grados. Guardar los datos en un
 #archivo ASCII donde una columna indique la latitud y la otra columna el valor del
 #promedio.
+rm(list = ls())
 
 setwd("D:/Users/Windows 10/Desktop/LABO 3/Labo-de-datos-R-main/Practicas/Archivos Practica 4")
 
@@ -387,9 +488,10 @@ mascara<-array(variable,c(48,96,1))
 #Ahora le indico que en donde sea mayor que la media ponga un 1 y en donde sea menor que ponga -1
 #Osea, tomame de mascara la posicion que cumpla que la Tp> o < a la media y si eso es TRUE poneme un 1 o un -1 en ese lugar
 
-mascara[which(Tp_850)>mean_Tp_850]<- 1
-mascara[which(Tp_850)<mean_Tp_850]<- -1
+mascara[(which(Tp_850>mean_Tp_850))]<- 1
+mascara[(which(Tp_850<mean_Tp_850))]<- -1
 
+mascara
 
 #c) Guardar la temperatura potencial (para todos los niveles) en un archivo 
 #binario de acceso directo . Guardar la mascara 
@@ -450,5 +552,35 @@ Viento_U<-array(variable,c(, ,2,1))
 #ok, un array no funca creo... mmmmmmm
 
 Viento_U<-variable[,,2,1,]
+Viento_U
 
+dim(Viento_U) #Bien, nos quedo algo de dos dim, solo falta jugar con:
 #Dice cada 10 grados mmm 
+#Se mueve 10 grados de longitud
+
+#nLong<-96
+#nLat<-48
+
+Long<-seq(1,96,10)
+Long
+
+#Tomo el promedio. La priemra dim es longitud y la segunda latitud
+
+PromedioViento<-mean(Viento_U[Long,])
+PromedioViento
+
+#EMMMM.... deberia darme al menos, 10 valores (length(Long))
+
+
+for (i in 1:length(Long)) {
+  PromedioViento<-mean(Viento_U[Long[i],])
+  Prom_U[i]<-c(PromedioViento)
+}
+
+#Messirve creo
+Prom_U
+
+
+
+Tabla_5d<-colnames(c("Latitud","Promedio Viento"))
+
