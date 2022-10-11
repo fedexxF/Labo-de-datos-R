@@ -40,10 +40,12 @@ b
 rm(list = ls())
 getwd()
 setwd("D:/Users/Windows 10/Desktop/LABO 3/Archivos Practica 3")
+setwd("~/LABO/Consultas")
 
 #Cargamos el data frame que nos pedian
 
 datos<-load("temp_bsas.Rdata")
+datos<-load("temp_bsas.RData")
 
 #a) Obtener el promedio mensual de temperatura en el periodo analizado para cada
 #nivel y cada punto de reticula. Hagalo por un lado utilizando ciclos y por
@@ -81,19 +83,23 @@ dim(media_mensual)
 #meses y aÃ±os, asique ahi esta la cosa
 
 
-#Si en el array original dividi 72 datos en 12 meses y 6 años
-#Aca estoy dividiendo 12 meses en 4 , quedandome con 3 meses y 6 años
+#Si en el array original dividi 72 datos en 12 meses y 6 a?os
+#Aca estoy dividiendo 12 meses en 4 , quedandome con 3 meses y 6 a?os
 #Armo el array para agarrar los datos que necesito. 
-#Dividiendo 12 meses en 4 , quedandome con 3 meses y 6 años. La dim 4= division de meses, dim 5 = meses que me quedo  y la dim 6 = aÃ±os
+#Dividiendo 12 meses en 4 , quedandome con 3 meses y 6 a?os. La dim 4= division de meses, dim 5 = meses que me quedo  y la dim 6 = aÃ±os
 
 
-temp_EFM<-array(variable,c(8,14,4,4,3,6))
+temp_EFM<-array(variable,c(8,14,4,3,4,6))
 temp_EFM
 
-#Esto toma los datos de la dim 1,2,3,4,5 (longitud,latitud,presion,division de meses,Trimestre,AñosO). la dim 6 no la usamos, chau
-#Estaria calculando el promedio mensual de esos 3 meses???
+###
+m=temp_mensual[1,1,1,,1]
+m_trim=array(temp_mensual,dim=c())
 
-media_EFM<-apply(temp_EFM,c(1,2,3,4,5),mean)
+#Esto toma los datos de la dim 1,2,3,4,5 (longitud,latitud,presion,division de meses,Trimestre,A?osO).
+#Estaria calculando el promedio mensual de esos 3 meses??? si
+
+media_EFM<-apply(temp_EFM,c(1,2,3,5,6),mean)
 media_EFM 
 
 
@@ -104,7 +110,7 @@ temp2_EFM
 # E1 E2 E3 ..
 # F1 F2 F3 ..
 
-#Esto toma los datos de la dim 1,2,3,4,5 (longitud,latitud,presion,division de meses,Trimestre,AñosO). la dim 6 no la usamos, chau
+#Esto toma los datos de la dim 1,2,3,4,5 (longitud,latitud,presion,division de meses,Trimestre,A?osO). la dim 6 no la usamos, chau
 #Estaria calculando el promedio mensual de esos 3 meses???
 
 media2_EFM<-apply(temp2_EFM,c(1,2,3,4,5),mean)
@@ -115,33 +121,34 @@ media2_EFM
 #Veo que no, por la cantidad de datos que tendria esto, no tiene sentido
 
 temp_MAM<-array(variable,c(8,14,4,4,3:5,6))
+temp_MAM=temp_mensual[,,,3:5,]
 (temp_MAM)
 # E1 E2 E3 ..
 # F1 F2 F3 ..
 
-#Esto toma los datos de la dim 1,2,3,4,5 (longitud,latitud,presion,division de meses,Trimestre,AñosO). la dim 6 no la usamos, chau
+#Esto toma los datos de la dim 1,2,3,4,5 (longitud,latitud,presion,division de meses,Trimestre,A?osO). la dim 6 no la usamos, chau
 #Estaria calculando el promedio anual de esos 3 meses????
 
 media_MAM<-apply(temp_MAM,c(1,2,3,4,6),mean)
 media_MAM 
 
 
-#Jugando con los años
+#Jugando con los a?os
 
 #Es legal esto????
 #Quedarme con el trimestre (o con los meses) 
-#y se me da por divir los años de 2 en 2
-#Entonces la dim 6 tendria los primeros 2 años
-#La dim 7, los años que van de 2 a 4
-#La dim 8, los años que van de 4 a 6
+#y se me da por divir los a?os de 2 en 2
+#Entonces la dim 6 tendria los primeros 2 a?os
+#La dim 7, los a?os que van de 2 a 4
+#La dim 8, los a?os que van de 4 a 6
 
 temp3_EFM<-array(variable,c(8,14,4,4,3,2,2,2))
 (temp3_EFM)
 # E1 E2 E3 ..
 # F1 F2 F3 ..
 
-#Esto toma los datos de la dim 1,2,3,4,5 (longitud,latitud,presion,division de meses,Trimestre,AñosO). la dim 6 no la usamos, chau
-#Estaria calculando el promedio anual de los 3 priemros años de esos 3 meses????
+#Esto toma los datos de la dim 1,2,3,4,5 (longitud,latitud,presion,division de meses,Trimestre,A?osO). la dim 6 no la usamos, chau
+#Estaria calculando el promedio anual de los 3 priemros a?os de esos 3 meses????
 
 media3_EFM<-apply(temp3_EFM,c(1,2,3,4,6),mean)
 media3_EFM 
@@ -149,9 +156,9 @@ media3_EFM
 
 #Es legal esto????
 #Quedarme con el trimestre (o con los meses) 
-#y se me da por divir los años de 3 en 3
-#Entonces la dim 6 tendria los primeros 3 años
-#La dim 7, los años que van de 3 a 6
+#y se me da por divir los a?os de 3 en 3
+#Entonces la dim 6 tendria los primeros 3 a?os
+#La dim 7, los a?os que van de 3 a 6
 
 
 temp4_EFM<-array(variable,c(8,14,4,4,3,3,3))
@@ -159,8 +166,8 @@ temp4_EFM<-array(variable,c(8,14,4,4,3,3,3))
 # E1 E2 E3 ..
 # F1 F2 F3 ..
 
-#Esto toma los datos de la dim 1,2,3,4,5 (longitud,latitud,presion,division de meses,Trimestre,AñosO). la dim 6 no la usamos, chau
-#Estaria calculando el promedio anual de los dos priemros años de esos 3 meses????
+#Esto toma los datos de la dim 1,2,3,4,5 (longitud,latitud,presion,division de meses,Trimestre,A?osO). la dim 6 no la usamos, chau
+#Estaria calculando el promedio anual de los dos priemros a?os de esos 3 meses????
 
 media4_EFM<-apply(temp4_EFM,c(1,2,3,4,6),mean)
 media4_EFM 
