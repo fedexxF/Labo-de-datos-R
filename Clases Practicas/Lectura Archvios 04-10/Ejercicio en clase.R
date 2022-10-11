@@ -59,6 +59,18 @@ LO <-   # COMPLETAR!
 # c)
 # Calcular la anomalia del anio 2020 
 
+fechas_enero<-t(months(t) == "enero")
+enero10<- which(format 
+enero10_2 <-
+
+
 
 # d)
 # Genero un txt con todos los resultados de a) a c)
+
+sink(here("salidas", "resultados.txt"))
+print(paste... todo lo de C
+...
+sink()      
+                
+                
