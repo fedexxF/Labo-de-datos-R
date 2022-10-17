@@ -94,7 +94,6 @@ tabla5<-read.fwf(datos, nrows=20, widths = c(2:6))
 #disponibles para cada estacion.
 
 
-
 rm(list = ls())
 setwd("D:/Users/Windows 10/Desktop/LABO 3/Labo-de-datos-R-main/Practicas/Archivos Practica 4")
 datos<-"datos_gts.txt"
@@ -571,6 +570,7 @@ PromedioViento
 
 #EMMMM.... deberia darme al menos, 10 valores (length(Long))
 
+Prom_U<-0
 
 for (i in 1:length(Long)) {
   PromedioViento<-mean(Viento_U[Long[i],])
@@ -583,4 +583,268 @@ Prom_U
 
 
 Tabla_5d<-colnames(c("Latitud","Promedio Viento"))
+
+
+#EJERCICIO 6##########################################################
+
+#a) Generar la misma lista del ejercicio 11 de la practica 3 pero sabiendo 
+#que los datos estan contenidos en el archivo excel estaciones.xls. Este archivo
+#cuenta con una hoja llamada INDICE donde se encuentra el listado de las 
+#estaciones junto con sus respectivas latitudes, longitudes y alturas, mientras
+#que los datos se encuentran almacenados en hojas con el nombre de la estacion
+#correspondiente. Generar la lista asumiendo que el numero y los nombres de las 
+#estaciones contenidas en el archivo en principio no son conocidas.
+
+setwd("D:/Users/Windows 10/Desktop/LABO4/Labo-de-datos-R-main/Practicas/Practica 4")
+
+DATA<- "D:/Users/Windows 10/Desktop/LABO4/Labo-de-datos-R-main/Practicas/Practica 4/datos/"      
+salidas<-"D:/Users/Windows 10/Desktop/LABO4/Labo-de-datos-R-main/Practicas/Practica 4/salidas/"      
+n_archivo<- "excel_estaciones.xls"
+
+archivo <- paste(DATA,n_archivo,sep="") #armo el acceso al archivo con la ruta y el nombre
+
+
+# cuando no me deja cargar una libreria poner:
+options(repos ='http://cran.rstudio.com') 
+
+#Cargo la libreria que necesito utilizar
+
+if(!require('gdata')) {
+  install.packages('gdata')
+  library('gdata')
+}
+
+
+#El help me decia esto
+#perl<-"C:/Strawberry/Perl/bin/perl.exe"
+
+#installXLSXsupport(perl = perl, verbose = FALSE)
+#installXLSXsupport()
+
+# si trabajamos en Windows y tenemos problemas (ver ppt)
+#installXLSXsupport(perl = 'C:/Strawberry/perl/bin/perl.exe')
+#installXLSXsupport(perl = "C:/Strawberry/perl/bin/perl.exe")
+#installXLSXsupport(perl = 'C:\\strawberry\\perl\\bin\\perl.exe')
+
+#Exploro la info del archivo
+n_sheets <- sheetCount(archivo) #nro de hojas en el archivo
+names<-sheetNames(archivo)      #nombres de las hojas  
+
+#Abrimos los archivos
+
+Indice<-read.xls(verbose=FALSE, perl="C:/Strawberry/Perl/bin/perl.exe",archivo,sheet="INDICE",header=FALSE)     #Uso el nombre de la hoja
+Azul<-read.xls(verbose=FALSE, perl="C:/Strawberry/Perl/bin/perl.exe",archivo,sheet="AZUL",header=FALSE)
+Catamarca<-read.xls(verbose=FALSE, perl="C:/Strawberry/Perl/bin/perl.exe",archivo,sheet="CATAMARCA",header=FALSE)
+Chilecito<-read.xls(verbose=FALSE, perl="C:/Strawberry/Perl/bin/perl.exe",archivo,sheet="CHILECITO",header=FALSE)
+Iguazu<-read.xls(verbose=FALSE, perl="C:/Strawberry/Perl/bin/perl.exe",archivo,sheet="IGUAZU",header=FALSE)
+Mendoza<-read.xls(verbose=FALSE, perl="C:/Strawberry/Perl/bin/perl.exe",archivo,sheet="MENDOZA",header=FALSE)
+Aeroparque<-read.xls(verbose=FALSE, perl="C:/Strawberry/Perl/bin/perl.exe",archivo,sheet="AEROPARQUE",header=FALSE)
+
+#Para que quede lindo ,le agrego nombres a las columnas
+
+
+nombre_columnas<-c("ID","Fecha","Temperatura","Td","Presion")
+colnames(Catamarca)<-nombre_columnas
+colnames(Aeroparque)<-nombre_columnas
+colnames(Chilecito)<-nombre_columnas
+colnames(Azul)<-nombre_columnas
+colnames(Iguazu)<-nombre_columnas
+colnames(Mendoza)<-nombre_columnas
+
+#Quedo hermoso
+
+salida<-rbind(Catamarca,Chilecito,Azul,Iguazu,Aeroparque,Mendoza)
+
+#b) Para cada estacion calcular la temperatura media total de la serie.
+
+salida$Temperatura
+salida$ID
+
+datos_temperatura<-split(salida$Temperatura, salida$ID)
+media<-lapply(datos_temperatura,mean)
+
+#EJERCICIO 7##########################################################
+
+#Dado el archivo hgt250 REFORECAST.nc y el archivo ncdump out.txt que contiene 
+#la salida del comando ncdump -h:
+
+#a) Abrir el archivo, obtener el numero de variables, de atributos y de dimensiones.
+
+rm(list=ls())
+require(ncdf4)
+setwd("D:/Users/Windows 10/Desktop/LABO4/Labo-de-datos-R-main/Practicas/Practica 4")
+path<- ("D:/Users/Windows 10/Desktop/LABO4/Labo-de-datos-R-main/Practicas/Practica 4/datos/")
+path_out<- ("D:/Users/Windows 10/Desktop/LABO4/Labo-de-datos-R-main/Practicas/Practica 4/salidas/")
+
+DATOS<-nc_open(paste(path,"hgt250_REFORECAST.nc",sep=""))
+class(DATOS) #Es ncdf4
+DATOS 
+
+#Nos piden que obtengamos el numero de variables, los atributos y las dimensiones
+DATOS
+nombre_var<-names(DATOS$var)
+nombre_var  #Se llaman "ensemble_member" (nombre largo) y "hgt" (nombre corto) (hgt[lon,lat,hrs,members,time]) var_desc: Geopotential height
+nombres_dim<-names(DATOS$dim) 
+nombres_dim #Son "time" "lat" "lon" "members" "hrs"
+DATOS[["ndims"]]
+
+#El punto b y c son casi lo mismo, es extraer info del archivo. con ncvar_get(nombre_del_archivo, "nombre_variable_a_extraer")
+#b) Asignar los datos de geopotencial a una variable de R.
+DATOS
+altura_geopotencial<-ncvar_get(DATOS,"hgt")
+
+#c) Obtener las latitudes y las longitudes que corresponden a cada punto de 
+#reticula de los datos.
+DATOS #Veo como se llaman las variables de latitud y longitud (seguro tienen la pinta de lat lon)
+
+latitudes<-ncvar_get(DATOS,"lat")
+longitudes<-ncvar_get(DATOS,"lon")
+
+#d) Obtener la variable tiempo. ¿En que unidades esta expresada dicha variable?
+#Utilizando la funcion de R as.Date convertir el tiempo al formato YYYY/MM/DD:HH.
+
+#Nota: Es util consultar la convencion de tiempos utilizada por R en el help del comando
+#as.Date, notar que esta convencion no es exactamente la misma que se utiliza en el
+#archivo netcdf.
+
+DATOS
+(DATOS$dim$time)
+(DATOS$dim$time$units)
+tiempo<-ncvar_get(DATOS,"time")
+tiempo
+
+#ah, estan codificados jajaja
+
+
+DATOS #Vemos que nos dice que el delta_t = 0000-00-00 12:00:00
+(DATOS$dim$time) 
+(DATOS$dim$time$vals) #Miro los datos 17548464[1,1] y 17548488[1,2] y veo que hay una dif de 24...
+(DATOS$dim$time$units) #Comienza en 1-1-1 00:00:0.0"
+
+#Entonces tiene saltos de 24 hs, avanza de a 1 dia con origen en el 1-1-1 00:00:0.0
+#Se ve lindo... me costo que funcionara. Gracias HELP
+
+tiempo<- as.Date(DATOS$dim$time$vals/24,origin="0001-01-01")
+tiempo
+
+#Le pongo el formato que me pide el enunciado.as.Date convertir el tiempo al formato YYYY/MM/DD:HH.
+
+t<-format(tiempo, "%Y/%m/%d:%H")
+t
+
+#EJERCICIO 8##########################################################
+
+#a) Armar una funcion de R que dado un archivo netcdf y el nombre de una variable,
+#devuelva un Data Frame con el nombre completo de la variable, sus dimensiones y sus
+#unidades.
+
+#La funcion pedira el ingreso de un archivo del tipo netcdf y una variable (expresada en su forma corta)
+#La ide ade esta funcion es que devuelva un data frame con el nombre completo de la variable,sus dimensiones y sus unidades (muy util todo)
+#Mirando lo de arriba y la calse teorica, deberia salir
+#Es todo lo mismo pero mas generico...dale,sale
+#Miremos lo de arriba iguañ ,asi no me olvido
+#DATOS == archivo
+#DATOS
+#nombre_var<-names(DATOS$var)
+#nombre_var  #Se llaman "ensemble_member" (nombre largo) y "hgt" (nombre corto) (hgt[lon,lat,hrs,members,time]) var_desc: Geopotential height
+#nombres_dim<-names(DATOS$dim) 
+#nombres_dim #Son "time" "lat" "lon" "members" "hrs"
+#DATOS[["ndims"]]
+
+DATOS
+nombre_var<-names(DATOS$var)
+nombre_var
+DATOS$var$longname #No funca, claro, le falta en el medio lo que saque arrriba. El nombre de la variable jaja
+DATOS$var$hgt$longname #Me da el nombre largo de esto
+DATOS$var$hgt$units
+DATOS$var$hgt$ndims
+nombres_dim<-names(DATOS$dim) 
+nombres_dim #Son "time" "lat" "lon" "members" "hrs"
+DATOS[["ndims"]]
+
+#Necesito que lo gaurde en un data frame
+
+
+LecturaNETCDF<-function(archivo,variable){
+  nombre_largo<-archivo$var[[variable]]$longname #Obtengo el nombre largo de la variable
+  unidades<-archivo$var[[variable]]$units  #Pido que me de las unidades de la variable
+  dim<-archivo[["ndims"]]                   #Pido que me de las dimensiones del archivo
+  
+
+  salida<-data.frame("Variable"=nombre_largo,"Unidades"=unidades,"Dimensiones"=dim)
+  return(salida)
+}
+
+LecturaNETCDF(DATOS,"hgt")
+
+
+#b) Idem a) pero que ademas incluya la informacion asociada a cada dimension 
+#en el caso esten disponibles dentro del archivo. 
+#Ejemplo, si le pedimos a la 
+#funcion los valores de la variable HGT y las dimensiones de dicha variable son 
+#la longitud y la latitud, entonces la funcion deberia entregar ademas la
+#informacion asociada a las dimensiones
+
+
+#Osea me piden que de los nombres de las 5 dimensiones (en este caso digo 5 pero seria de n cantidad de dim del archivo)
+#Ademas que me den sus nombres y unidades... suena a un ciclo for que me vaya recorriendo y alamcenando valores (nombres y unidades)
+#El ciclo for debera iterar de 1 a la longitud total de las dimensiones, debera entrar en cada dimension, darnos el nombre, guardarlo.
+#Despues darnos las unidades y gaurdarlas
+
+
+nombres_dim<-names(DATOS$dim) 
+nombres_dim #Son "time" "lat" "lon" "members" "hrs"
+primeraDim<-nombres_dim[1]
+DATOS[["ndims"]]
+(DATOS$dim$time)
+(DATOS$dim$time$units)
+
+
+nombres_dim<-names(DATOS$dim) 
+nombres_dim
+
+DATOS$dim[[1]]
+DATOS$dim[[1]]$units 
+
+(DATOS$dim$nombres_dim$units)
+
+nombre<-0
+unidades<-0
+for (i in 1:DATOS[["ndims"]]) {
+  nombres_dim<-names(DATOS$dim) 
+  nombre[i]<-nombres_dim[i]
+  unidades[i]<-DATOS$dim[[i]]$units
+}
+
+#Si lo generalizo... DATOS=archivos
+nombre<-0
+unidades<-0
+for (i in 1:archivo[["ndims"]]) {
+  nombres_dim<-names(archivo$dim) 
+  nombre[i]<-nombres_dim[[i]]
+  unidades[i]<-archivo$dim[[i]]$units
+}
+
+#Copio y pego lo de a) pero leagrego lo que me pide: y le agrego el ciclo for que arme
+
+Lectura2NETCDF<-function(archivo,variable){
+  nombre_largo<-archivo$var[[variable]]$longname #Obtengo el nombre largo de la variable
+  unidades1<-archivo$var[[variable]]$units  #Pido que me de las unidades de la variable
+  dim<-archivo[["ndims"]]                   #Pido que me de las dimensiones del archivo
+  
+  nombre<-0
+  unidades<-0
+  for (i in 1:archivo[["ndims"]]) {
+    nombres_dim<-names(archivo$dim) 
+    nombre[i]<-nombres_dim[[i]]
+    unidades[i]<-archivo$dim[[i]]$units
+  }
+  nombre_dimensiones<-names(archivo$dim)
+  
+  salida<-data.frame("Variable"=nombre_largo,"Unidades"=unidades1,"Dimensiones"=dim, "Nombre Dimensiones"=nombres_dim,"Unidades"=unidades)
+  return(salida)
+}
+
+Lectura2NETCDF(DATOS,"hgt")
+
 
