@@ -1,0 +1,4 @@
+[1] La temperatura maxima en Bs.As. ocurrió en 1989-01
+[1] La temperatura minima en Bs.As. ocurrió en 1955-07
+[1] La temp media de enero para el periodo 1948 - 2021 es: 23.9 °C
+[1] La anomalia de temperatura para Bs.As para el anio 2010 es: 1.54 °C
