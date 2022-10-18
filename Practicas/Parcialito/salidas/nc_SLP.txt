@@ -1,0 +1,27 @@
+File /home/clinux01/Escritorio/LABO/Labo-de-datos-R-main/Practicas/Parcialito/datos/netcdf_SLP_SA_1979_2014.nc (NC_FORMAT_CLASSIC):
+
+     1 variables (excluding dimension variables):
+        short msl[longitude,latitude,time]   
+            scale_factor: 0.0916999832145637
+            add_offset: 99967.2666500084
+            _FillValue: -32767
+            missing_value: -32767
+            units: Pa
+            long_name: Mean sea level pressure
+            standard_name: air_pressure_at_sea_level
+
+     3 dimensions:
+        longitude  Size:69 
+            units: degrees_east
+            long_name: longitude
+        latitude  Size:55 
+            units: degrees_north
+            long_name: latitude
+        time  Size:432   *** is unlimited *** 
+            units: hours since 1900-01-01 00:00:0.0
+            long_name: time
+            calendar: gregorian
+
+    2 global attributes:
+        Conventions: CF-1.0
+        history: 2015-08-03 22:10:37 GMT by grib_to_netcdf-1.13.1: grib_to_netcdf /data/data04/scratch/netcdf-atls09-a562cefde8a29a7288fa0b8b7f9413f7-qDpEYF.target -o /data/data04/scratch/netcdf-atls09-a562cefde8a29a7288fa0b8b7f9413f7-LUmDJH.nc -utime
