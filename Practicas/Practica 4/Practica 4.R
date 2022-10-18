@@ -16,11 +16,12 @@
 
 rm(list = ls())
 setwd("D:/Users/Windows 10/Desktop/LABO 3/Labo-de-datos-R-main/Practicas/Archivos Practica 4")
+setwd("~/Escritorio/LABO/Labo-de-datos-R-main/Practicas/Practica 4")
 datos<-"87576.dat"
 
 #Solo se me ocurre un ciclo if y que printee un msj que me diga si lo pudo abrrir o no
 #Viendo la teorica y con ayuda de google uso file.exists
-#que devuelve un vector lógico indicando si los archivos a los cuales se hace referencia en los argumentos existen.
+#que devuelve un vector l?gico indicando si los archivos a los cuales se hace referencia en los argumentos existen.
 
 if(file.exists(datos)){                           #Si el archivo datos existe == TRUE
   print("El archivo, 87576.dat ,fue abierto exitosamente")    #Me printea que esta todo OK
@@ -38,7 +39,7 @@ colnames(Tabla_Datos)<-c("","Td","Temperatura")
 #variable integer, y la segunda y tercera columna en una variable real.
 
 #En la teorica vimos algo magico
-#skip: el número de líneas del archivo de datos que deben ser salteados antes de comenzar a leer los datos.
+#skip: el n?mero de l?neas del archivo de datos que deben ser salteados antes de comenzar a leer los datos.
 #datos2=read.table(dir_datos,nrows=24,skip=11)  #Saltea 11 filas y aparatir de la fila 12 y me muestra la info
 
 #Le pifie xd, esto me sirve mas jajaj
@@ -67,21 +68,29 @@ Tabla3<-read.table(datos,nrows = 20,ncols=3)
 Tabla3<-read.table(datos,nrows = 20,nmax=60)
 Tabla3<-read.table(datos,nrows = 20)
 
+Tabla3<-read.table(datos,nrows = 20,colClasses = c("numeric","numeric","numeric","NULL","NULL"))
+
 #Bueno, en la teorica encontre esto:
 #                  Cargar datos - read.fwf
 #Lee una tabla con datos de formato ancho fijo y lo convierte en un data.frame.
-#Los records de más de una línea son concatenados a una sola línea antes de ser procesados.
+#Los records de m?s de una l?nea son concatenados a una sola l?nea antes de ser procesados.
          #read.fwf(file, widths, header = FALSE, sep = "\t",
          #skip = 0, row.names, col.names, n = -1,
          #buffersize = 2000, fileEncoding = "", ...)
-#widths: un vector entero que contiene los anchos de los campos (de una línea) o
-#una lista de vectores enteros que contiene los anchos de varias líneas
+#widths: un vector entero que contiene los anchos de los campos (de una l?nea) o
+#una lista de vectores enteros que contiene los anchos de varias l?neas
 #Colocar un valor negativo indica la cantidad de columnas que se deben saltear,
 #e.g., -5 saltear 5 columnas.
 
 tabla3<-read.fwf(datos, nrows=20, widths = c(6:6))
 tabla4<-read.fwf(datos, nrows=20, widths = c(6:10))
 tabla5<-read.fwf(datos, nrows=20, widths = c(2:6))
+
+#Era asi, gracias profe
+
+Tabla3<-read.table(datos,nrows = 20,colClasses = c("numeric","numeric","numeric","NULL","NULL"))
+
+#Lee las primeras 20 filas .Lee los numeric, no lee los NULL
 
 
 #EJERCICIO 2##########################################################
@@ -96,6 +105,7 @@ tabla5<-read.fwf(datos, nrows=20, widths = c(2:6))
 
 rm(list = ls())
 setwd("D:/Users/Windows 10/Desktop/LABO 3/Labo-de-datos-R-main/Practicas/Archivos Practica 4")
+setwd("~/Escritorio/LABO/Labo-de-datos-R-main/Practicas/Practica 4")
 datos<-"datos_gts.txt"
 
 #Abrimos el archivo y vemos que tiene lineas de texto... que no nos interesan. Queremos los datos nomas
@@ -107,17 +117,20 @@ tabla1
 
 #a)
 
-#No tengo idea de como seguir el cilo for 
+#No tengo idea de como seguir el cilo for... o si se hace asi  
+
+list(length(which(tabla1[6,1]==tabla1[[1]])))
+list(length(which(tabla1[1,1]==tabla1[[1]])))
 
 Estaciones<-function(tabla1){
   Lista<-list()
   estaciones<-tabla1[[1]]  #En estaciones, guardo todos los nombres que hay en la columna 1
-  for (i in 1:length(Estaciones)) {  #Recorre de 1 hasta la longitud de ESTACIONES = 801
-    
+  for (i in 1:length(estaciones)) {  #Recorre de 1 hasta la longitud de ESTACIONES = 801
+    Cantidad_Mediciones_Estacion<-list(which(tabla1[i,1]==tabla1[[1]]))
 }
 
 #b) Escribir esta lista en un archivo ascii en dos columnas donde la primera es 
-#el nombre de la estación y la segunda es la cantidad de datos. Incluir un 
+#el nombre de la estaci?n y la segunda es la cantidad de datos. Incluir un 
 #encabezado que indique que es cada columna.
 
 
@@ -147,12 +160,12 @@ tabla1
 tabla1<-read.table(datos, header=FALSE, sep = ",")
 tabla1
 
-#mejor, veo un pequeño detalle... Los NA estan con barritas creo mmmm no se que hacer
+#mejor, veo un peque?o detalle... Los NA estan con barritas creo mmmm no se que hacer
 #HELP read.table... NA.STRINGS!!!
 
-#un vector de caracteres de cadenas que deben interpretarse como valores NA. Los campos en blanco también se consideran valores faltantes 
-#en campos lógicos, enteros, numéricos y complejos. 
-#Tenga en cuenta que la prueba se realiza después de eliminar el espacio en blanco de la entrada, por lo que es posible que los valores 
+#un vector de caracteres de cadenas que deben interpretarse como valores NA. Los campos en blanco tambi?n se consideran valores faltantes 
+#en campos l?gicos, enteros, num?ricos y complejos. 
+#Tenga en cuenta que la prueba se realiza despu?s de eliminar el espacio en blanco de la entrada, por lo que es posible que los valores 
 #de na.strings necesiten eliminar su propio espacio en blanco por adelantado.
 
 tabla1<-read.table(datos, header=FALSE, sep = ",", na.strings = "//")
@@ -161,18 +174,18 @@ tabla1
 #No funco...debe faltar algo mas pero la idea parece bien
 
 #La ultima parte del HELP de NA.STRING me dice:
-##Tenga en cuenta que la prueba se realiza después de eliminar el espacio en blanco de la entrada, por lo que es posible que los valores 
+##Tenga en cuenta que la prueba se realiza despu?s de eliminar el espacio en blanco de la entrada, por lo que es posible que los valores 
 #de na.strings necesiten eliminar su propio espacio en blanco por adelantado.
 
 #Encontre mas ayuda, strip.white... litralmente es
-#tira.blanca lógico. Se usa solo cuando se ha especificado sep y permite eliminar los espacios en blanco iniciales y finales de los campos de caracteres 
-#sin comillas (los campos numéricos siempre se eliminan). Consulte el escaneo para obtener más detalles 
+#tira.blanca l?gico. Se usa solo cuando se ha especificado sep y permite eliminar los espacios en blanco iniciales y finales de los campos de caracteres 
+#sin comillas (los campos num?ricos siempre se eliminan). Consulte el escaneo para obtener m?s detalles 
 #(incluido el significado exacto de "espacio en blanco"), recordando que las columnas pueden incluir los nombres de las filas
 
 #Necesito usar eso me parece
 
 tabla1<-read.table(datos, header=FALSE, sep = ",",strip.white = TRUE, na.strings = "//")
-tabla1
+tabla1 
 
 tabla1[is.na(tabla1)]=-999.9 # asignar un codigo de -999 a los datos faltantes.
 
@@ -700,7 +713,7 @@ DATOS #Veo como se llaman las variables de latitud y longitud (seguro tienen la 
 latitudes<-ncvar_get(DATOS,"lat")
 longitudes<-ncvar_get(DATOS,"lon")
 
-#d) Obtener la variable tiempo. ¿En que unidades esta expresada dicha variable?
+#d) Obtener la variable tiempo. ?En que unidades esta expresada dicha variable?
 #Utilizando la funcion de R as.Date convertir el tiempo al formato YYYY/MM/DD:HH.
 
 #Nota: Es util consultar la convencion de tiempos utilizada por R en el help del comando
@@ -742,7 +755,7 @@ t
 #La ide ade esta funcion es que devuelva un data frame con el nombre completo de la variable,sus dimensiones y sus unidades (muy util todo)
 #Mirando lo de arriba y la calse teorica, deberia salir
 #Es todo lo mismo pero mas generico...dale,sale
-#Miremos lo de arriba iguañ ,asi no me olvido
+#Miremos lo de arriba igua? ,asi no me olvido
 #DATOS == archivo
 #DATOS
 #nombre_var<-names(DATOS$var)
