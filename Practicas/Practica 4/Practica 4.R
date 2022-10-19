@@ -15,7 +15,7 @@
 #a)
 
 rm(list = ls())
-setwd("D:/Users/Windows 10/Desktop/LABO 3/Labo-de-datos-R-main/Practicas/Archivos Practica 4")
+setwd("D:/Users/Windows 10/Desktop/LABO 1/Labo-de-datos-R-main/Practicas/Archivos Practica 4")
 setwd("~/Escritorio/LABO/Labo-de-datos-R-main/Practicas/Practica 4")
 datos<-"87576.dat"
 
@@ -104,7 +104,7 @@ Tabla3<-read.table(datos,nrows = 20,colClasses = c("numeric","numeric","numeric"
 
 
 rm(list = ls())
-setwd("D:/Users/Windows 10/Desktop/LABO 3/Labo-de-datos-R-main/Practicas/Archivos Practica 4")
+setwd("D:/Users/Windows 10/Desktop/LABO 1/Labo-de-datos-R-main/Practicas/Archivos Practica 4")
 setwd("~/Escritorio/LABO/Labo-de-datos-R-main/Practicas/Practica 4")
 datos<-"datos_gts.txt"
 
@@ -115,25 +115,40 @@ tabla1
 
 #Vemos que es un hermoso archivo que tiene estaciones y muchos datos mas. Solo nos interesa la primera columna y la cantidad de obs por estacion
 
-#a)
+#Agarro los titulos del encabezado para agregar a mi tabla1
+
+titulos_variables<-read.table(datos, header=FALSE, skip=5, nrow=1)
+colnames(tabla1)<-titulos_variables
 
 #No tengo idea de como seguir el cilo for... o si se hace asi  
 
 list(length(which(tabla1[6,1]==tabla1[[1]])))
 list(length(which(tabla1[1,1]==tabla1[[1]])))
 
-Estaciones<-function(tabla1){
-  Lista<-list()
-  estaciones<-tabla1[[1]]  #En estaciones, guardo todos los nombres que hay en la columna 1
-  for (i in 1:length(estaciones)) {  #Recorre de 1 hasta la longitud de ESTACIONES = 801
-    Cantidad_Mediciones_Estacion<-list(which(tabla1[i,1]==tabla1[[1]]))
-}
-
+  
+est = function(tabla1) {
+    lista = data.frame() #Armo data frame
+    estaciones = split(tabla1,tabla1[[1]])
+    for (i in 1:length(estaciones)) {    #Recorro desde 1 al largo de estaciones
+      lista[i,1] = estaciones[[i]][1,1]  #Nombre de la estacion
+      lista[i,2] = nrow(estaciones[[i]]) #Numero de filas para esa estacion, me da la cantidad de datos
+    }
+    colnames(lista) = c("Nombre de la estacion", "Cantidad de datos")
+    return(lista)
+  }
+  observaciones<-est(tabla1) 
+  print(observaciones)  
+  
+  
+  
 #b) Escribir esta lista en un archivo ascii en dos columnas donde la primera es 
 #el nombre de la estaci?n y la segunda es la cantidad de datos. Incluir un 
 #encabezado que indique que es cada columna.
 
-
+path_out<-"D:/Users/Windows 10/Desktop/LABO1/Labo-de-datos-R-main/Practicas/Practica 4/salidas/"
+file_out<- "Ej_2b.txt"
+write.table(observaciones,paste(path_out,file_out,sep=""))
+  
 
 
 #EJERCICIO 3##########################################################
@@ -145,7 +160,7 @@ Estaciones<-function(tabla1){
 #a) Leer los datos y asignar un codigo de -999 a los datos faltantes.
 
 rm(list = ls())
-setwd("D:/Users/Windows 10/Desktop/LABO 3/Labo-de-datos-R-main/Practicas/Archivos Practica 4")
+setwd("D:/Users/Windows 10/Desktop/LABO1/Labo-de-datos-R-main/Practicas/Practica 4")
 datos<-"sondeo.txt"
 read.table(datos)
 
