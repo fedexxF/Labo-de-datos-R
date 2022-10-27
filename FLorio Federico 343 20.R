@@ -19,6 +19,7 @@ rm(list=ls()) #Primero limpiamos el Environment
 
 # Seteo el espacio de trabajo 
 setwd("~/Escritorio/Parcialito")
+setwd("~/Descargas")
 
 #Vamoos a necesitar la libreria HERE y ncdf4 para poder cargar y manipular el archivo, por lo cual las instalamos
 
@@ -26,7 +27,7 @@ library(here)
 require(ncdf4)
 
 # Primero voy a abrir el archivo que me piden, indicnado el nombre de la carpeta en donde esta guardado y el nombre del archivo
-archivo <- here("datos", "air_temp_mon_2015_2021_levels.3xLsxyki.nc.part")
+archivo <- here("datos", "air_temp_mon_2015_2021_levels.nc")
 
 # ABrimos el archivo con nc_open 
 nc<- nc_open(archivo)
@@ -82,7 +83,7 @@ nc$var$t$units
 #Que mal, esta en kelvin jaja. Hay que modificarla y K-273.15 = Grados celcius #No se como hacer esto
 
 #longitud*latitud*level*time
-
+a <- ncvar_get(nc, "t") #cambiar para que abra solo el nivel de 1000
 #Pruebas multiples que indican cierta desesperacion C:
 
 Array_Base<-ncvar_get(nc,"longitude","latitude",1000,tiempo)
@@ -98,7 +99,7 @@ a<-data.frame(lon,lats,level,tiempo)
 Intento_Raro<- ncvar_get(nc,"t",start = c(lon[1], lats[1], 3,1),  #Start es "desde donde" toma los datos
                        count =c(length(lon), length(lats), 3,83))
 
-
+Data_FrameA<-array(nc,lon,lats,level,tiempo) #Seria asi *Tengo que fijar el dato de lats
 
 #b) A partir del array del inciso a), seleccione la latitud cercana a Rosario (32.87°S) y
 #calcule el promedio de todas las longitudes. Luego, a partir de la serie temporal
@@ -119,8 +120,14 @@ temp_RO<- ncvar_get(nc,"t",start = c(lon[1], LA[1], 1),  #Start es "desde donde"
                        count =c(length(lon), length(LA), -1))
 temp_RO
 
+#usar applpy para calcular promedio en todo el circulo de latitud (sobre las longitudes)
+#Capaz con esto
+temp_RO<- ncvar_get(Data_FrameA,"t",start = c(lon[1], LA[1], 1),  #Start es "desde donde" toma los datos
+                    count =c(length(lon), length(LA), -1))
+temp_RO
 
-
+datos <- 1:84
+datos_Array = array(datos, dim =c(12,7))
 #Para hacer la serie temporal, para cada mes, tengo que buscar cada dato de cada mes
 which(months(tiempo) == "enero") #A modo de eejmplo, esto me da las posiciones de todos los eneros del periodo
 
@@ -149,6 +156,7 @@ temp_oct_avg <- mean(temp_oct)
 temp_nov_avg <- mean(temp_nov)
 temp_dic_avg <- mean(temp_dic)
 
+################################Mejorar con in ciclo for###############################
 
 #EStariamos calulando las tmin para cada mes (como pide el ejercicio)
 
