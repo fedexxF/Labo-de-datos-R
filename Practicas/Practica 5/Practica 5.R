@@ -35,10 +35,9 @@ setwd("D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/Practicas/Practica 
 datos<-here("datos","newsam.1957.2007.txt")
 read.table(datos)
 
-tabla1<-read.table(datos, header=FALSE, sep=" ")
+tabla1<-read.table(datos,fill = TRUE ,header=TRUE)
 tabla1 
-tabla1[1,1]
-colnames(tabla1)<-
+
 
 #AHora si empezamos a trabajar co nlso datos
 #Nos piden graficar la evolucion temporal del  iındice
@@ -46,17 +45,17 @@ colnames(tabla1)<-
 #Acomodamos los datos
 
 #Eje x: tiempo
-fechas <- seq(as.Date("1957-01-01"),as.Date("2007-12-01"),by="month")
+fechas <- seq(as.Date("1957-01-01"),as.Date("2022-12-01"),by="month")
 fechas
 
 # Genero un array de 7x12 vacío donde guardar los datos
-Tabla_Completar <- array(NA, c(66,12))
+Tabla_Completar <- array(NA, c(65,12))
 Tabla_Completar
 
 #Recorro las columnas de la tabla original,les guardo los datos que cargamos en la tabla
 
 for(i in 1:12){
-  Tabla_Completar[,i] <- tabla1[1:7,1]  #a tabla de 1 a 7 y de columnas i (1 a 12). Guardalas por columnas en Tabla_Completar
+  Tabla_Completar[,i] <- tabla1[1:65,i]  #a tabla de 1 a 7 y de columnas i (1 a 12). Guardalas por columnas en Tabla_Completar
 }
 Tabla_Completar
 
