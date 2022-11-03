@@ -12,9 +12,13 @@
 #e) Guardar la variable del criterio de Bonner en un archivo binario de doble precisión y
 #Little Endian. (Para los puntos donde no se cumple el criterio definir un valor de undef). Crear un archivo de control (header).
 
-setwd("~/Escritorio/LABO/Labo-de-datos-R-main/Trabajo Final")
-datos <- "~/Escritorio/LABO/Labo-de-datos-R-main/Trabajo Final/datos/"
-salidas <- "~/Escritorio/LABO/Labo-de-datos-R-main/Trabajo Final/salidas/"
+rm(list=ls())
+graphics.off()
+
+
+setwd("~/Escritorio/LABO/Labo-de-datos-R-main/TP FINAL")
+datos <- "~/Escritorio/LABO/Labo-de-datos-R-main/TP FINAL/datos/"
+salidas <- "~/Escritorio/LABO/Labo-de-datos-R-main/TP FINAL/salidas/"
 
 
 # Leemos el archivo "hbonner.ctl" y extraemos las variables
@@ -38,21 +42,13 @@ salidas <- "~/Escritorio/LABO/Labo-de-datos-R-main/Trabajo Final/salidas/"
 
 
 #Datos en total:
-nlons<-71
-nlats<-141
+nlats<-71
+nlons<-141
 ntimes<-8
 nlevs<-21
 nvars<-4
 nrecords<-ntimes*nlevs*nvars*nlats*nlons
 
-for (i in 1:8) {
-  data[i]<- readBin(paste0(datos,"bonner2007032612.gra"),
-                    "numeric", 
-                    size=4, 
-                    n=nrecords, 
-                    endian="little")
-  
-}
 
 data <- readBin(paste0(datos,"bonner2007032612.gra"),
                 "numeric", 
@@ -61,9 +57,104 @@ data <- readBin(paste0(datos,"bonner2007032612.gra"),
                 endian="little")
 
 data1 <- readBin(paste0(datos,"bonner2007032618.gra"),
-                "numeric", 
-                size=4, 
-                n=nrecords, 
-                endian="little")
+                 "numeric", 
+                 size=4, 
+                 n=nrecords, 
+                 endian="little")
 
+array<-array(data1,dim=840924)
+
+
+
+#Estabelcemos el directorio de trabajo y la carpeta en donde se ecnuentran los datos a utilizar 
+setwd("D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/TP FINAL")
+datos <- "D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/TP FINAL/datos/"
+#Con list.files le pedimos que lea los archivos que se encuentran en la carpeta /datos.
+#Con pattern le pedimos que carge solo los archivos .gra
+archivos<-list.files(".//datos", pattern = "\\.gra")
+
+archivo1<-readBin(paste0(datos,archivos[1]),
+        "numeric", 
+        size=4, 
+        n=nrecords, 
+        endian="little")
+
+archivo2<-readBin(paste0(datos,archivos[2]),
+                  "numeric", 
+                  size=4, 
+                  n=nrecords, 
+                  endian="little")
+
+
+
+archivo3<-readBin(paste0(datos,archivos[3]),
+                  "numeric", 
+                  size=4, 
+                  n=nrecords, 
+                  endian="little")
+
+
+
+archivo4<-readBin(paste0(datos,archivos[4]),
+                  "numeric", 
+                  size=4, 
+                  n=nrecords, 
+                  endian="little")
+
+
+
+archivo5<-readBin(paste0(datos,archivos[5]),
+                  "numeric", 
+                  size=4, 
+                  n=nrecords, 
+                  endian="little")
+
+archivo6<-readBin(paste0(datos,archivos[6]),
+                  "numeric", 
+                  size=4, 
+                  n=nrecords, 
+                  endian="little")
+archivo7<-readBin(paste0(datos,archivos[7]),
+                  "numeric", 
+                  size=4, 
+                  n=nrecords, 
+                  endian="little")
+
+archivo8<-readBin(paste0(datos,archivos[8]),
+                  "numeric", 
+                  size=4, 
+                  n=nrecords, 
+                  endian="little")
+
+
+suma<-0
+a<-c(seq(1,10,1))
+f<-c()
+for (i in 1:length(archivos)) {
+  suma[i]<- a[i]
+  l<-rbind(f,suma)
+}
+
+#Con ciclo for
+
+
+datos_TP<-array(NA)
+for (i in 1:3) {
+  aux<-readBin(paste0(datos,archivos[i]),
+               "numeric", 
+               size=4, 
+               n=nrecords, 
+               endian="little")
+  datos_Binarios<-rbind(datos_TP,aux)
+  
+}
+
+#Leer los datos del viento zonal y meridional para los niveles entre 1000 y 500 hPa.
+levels <- c(1000,975 ,950 ,925, 900, 850, 800, 750, 700, 650, 600, 550, 500)
+#La variable a usar es la de viento zonal y meridional, que corresponden a al variable 2 y 3 segun el archivo CTL
+Datos_TP <- array(datos_Binarios,c(nlats,nlons,nlevs,ntimes,nvars)) #Armo un array segun el orden del CTL
+
+Datos_TP<-Datos_TP[,,which(levels==seq(1000,500,-25)),,2:3]
+
+#b) Calcular el criterio de Bonner en el nivel de 850 hPa para todos los tiempos (nivel superior 600 hPa).
 
