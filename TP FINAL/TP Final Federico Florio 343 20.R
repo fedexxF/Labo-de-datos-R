@@ -12,6 +12,10 @@
 #e) Guardar la variable del criterio de Bonner en un archivo binario de doble precisión y
 #Little Endian. (Para los puntos donde no se cumple el criterio definir un valor de undef). Crear un archivo de control (header).
 
+
+#Criterio de bonner es 
+#diferencia de viento entre dos niveles de hpa
+
 rm(list=ls())
 graphics.off()
 
@@ -19,7 +23,9 @@ graphics.off()
 setwd("~/Escritorio/LABO/Labo-de-datos-R-main/TP FINAL")
 datos <- "~/Escritorio/LABO/Labo-de-datos-R-main/TP FINAL/datos/"
 salidas <- "~/Escritorio/LABO/Labo-de-datos-R-main/TP FINAL/salidas/"
+datos <- "~/Escritorio/LABO/Labo-de-datos-R-main/TP FINAL/datos/"
 
+setwd("~/Escritorio/LABO/Labo-de-datos-R-main/TP FINAL")
 
 # Leemos el archivo "hbonner.ctl" y extraemos las variables
 
@@ -50,25 +56,11 @@ nvars<-4
 nrecords<-ntimes*nlevs*nvars*nlats*nlons
 
 
-data <- readBin(paste0(datos,"bonner2007032612.gra"),
-                "numeric", 
-                size=4, 
-                n=nrecords, 
-                endian="little")
-
-data1 <- readBin(paste0(datos,"bonner2007032618.gra"),
-                 "numeric", 
-                 size=4, 
-                 n=nrecords, 
-                 endian="little")
-
-array<-array(data1,dim=840924)
-
-
-
 #Estabelcemos el directorio de trabajo y la carpeta en donde se ecnuentran los datos a utilizar 
 setwd("D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/TP FINAL")
+setwd("~/Escritorio/LABO/Labo-de-datos-R-main/TP FINAL")
 datos <- "D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/TP FINAL/datos/"
+datos <- "~/Escritorio/LABO/Labo-de-datos-R-main/TP FINAL/datos/"
 #Con list.files le pedimos que lea los archivos que se encuentran en la carpeta /datos.
 #Con pattern le pedimos que carge solo los archivos .gra
 archivos<-list.files(".//datos", pattern = "\\.gra")
@@ -127,32 +119,64 @@ archivo8<-readBin(paste0(datos,archivos[8]),
                   endian="little")
 
 
-suma<-0
-a<-c(seq(1,10,1))
-f<-c()
-for (i in 1:length(archivos)) {
-  suma[i]<- a[i]
-  l<-rbind(f,suma)
-}
 
 #Con ciclo for
 
 
-datos_TP<-array(NA)
-for (i in 1:3) {
+aux<-0
+datos_Binarios<-0
+datos_TP<-data.frame()
+Datos_TP<-0
+
+
+for (i in 1:8) {
+  aux<-readBin(paste0(datos,archivos[i]),"numeric", size=4, n=nrecords, endian="little")
+  datos_Binarios[i]<-data.frame(aux)
+  
+}
+
+for (i in 1:2) {
+  Datos_TP<-array(datos_Binarios[1],c(nlats,nlons,nlevs,nvars))
+  
+}
+
+aux<-0
+datos_Binarios<-0
+datos_TP<-data.frame()
+Datos_TP1<-0
+for (i in 1:2) {
   aux<-readBin(paste0(datos,archivos[i]),
                "numeric", 
                size=4, 
                n=nrecords, 
                endian="little")
-  datos_Binarios<-rbind(datos_TP,aux)
-  
+  Datos_TP1[i]<- array(aux,c(nlats,nlons,ntimes,nlevs,nvars))
 }
+
+
+
+
+Datos_TP1 <- array(archivo1,c(nlats,nlons,nlevs,nvars))
+Datos_TP2 <- array(archivo2,c(nlats,nlons,nlevs,nvars))
+Datos_TP3 <- array(archivo3,c(nlats,nlons,nlevs,nvars))
+Datos_TP4 <- array(archivo4,c(nlats,nlons,ntimes,nlevs,nvars))
+Datos_TP5 <- array(archivo5,c(nlats,nlons,ntimes,nlevs,nvars))
+Datos_TP6 <- array(archivo6,c(nlats,nlons,ntimes,nlevs,nvars))
+Datos_TP7 <- array(archivo7,c(nlats,nlons,ntimes,nlevs,nvars))
+Datos_TP8 <- array(archivo8,c(nlats,nlons,ntimes,nlevs,nvars))
+
+
+
+lista<-list(Datos_TP1,Datos_TP2,Datos_TP3)
+
+array<-array(lista,c(nlats,nlons,nlevs,nvars))
+
+#Lo voy a trabajar por listas
 
 #Leer los datos del viento zonal y meridional para los niveles entre 1000 y 500 hPa.
 levels <- c(1000,975 ,950 ,925, 900, 850, 800, 750, 700, 650, 600, 550, 500)
 #La variable a usar es la de viento zonal y meridional, que corresponden a al variable 2 y 3 segun el archivo CTL
-Datos_TP <- array(datos_Binarios,c(nlats,nlons,nlevs,ntimes,nvars)) #Armo un array segun el orden del CTL
+Datos_TP <- array(datos_Binarios,c(nlats,nlons,ntimes,nlevs,nvars)) #Armo un array segun el orden del CTL
 
 Datos_TP<-Datos_TP[,,which(levels==seq(1000,500,-25)),,2:3]
 
