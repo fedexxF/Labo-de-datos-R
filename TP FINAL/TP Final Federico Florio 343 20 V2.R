@@ -99,8 +99,9 @@ for (i in 1:8) {
   datos_array<-array(
     readBin(paste0(datos,archivos[i]),"numeric", size=4, n=nrecords, endian="little"),
     dim=c(nlons,nlats,nlevs,nvars,ntime)
-    )
+  )
 }
+
 
 
 #Extraemos las variables  que nos piden. Es decir, viento zonal y meridional 
@@ -115,7 +116,7 @@ levels<-c(1000, 975, 950, 925, 900, 850, 800, 750, 700, 650, 600, 550, 500, 450,
 
 Viento_zonal_1000_500<-datos_array[,,levels>=500 & levels<=1000,2,]
 Viento_meridional_1000_500<-datos_array[,,levels>=500 & levels<=1000,3,]
-  
+
 
 #b) Calcular el criterio de Bonner en el nivel de 850 hPa para todos los tiempos (nivel superior 600 hPa)
 
@@ -158,7 +159,7 @@ Viento_Zonal_Bonner<-Viento_zonal_850[Viento_zonal_850_12]
 
 Cortante_Viento<-array(abs(Viento_meridional_600-Viento_meridional_850),dim = c(141,71,8))
 Cortante_Viento_Bonner<-Cortante_Viento[(Cortante_Viento>=6)]
-  
+
 ################################################################################################################
 
 #Necesito los valores TRUE o FALSE en los puntos de reticula en donde se cumple el criterio de bonner
@@ -249,7 +250,43 @@ mi_mapa <- geom_path(data=mapa,                    #Le agrego un poco de estilo
 #Los del modelo van de 0 a 360
 
 #Usamos la función de metR para convertir longitudes:
-df$lons <- ConvertLongitude(df$lons) 
+df$lons <- ConvertLongitude(df$lons) #EHHHH TE CONVIERTE LAS LONGITUDES ACORDE AL SISTEMA WTF
+
+
+df$Bonner<-Criterio_de_Bonner
+
+Viento_zonal_850<-datos_array[,,levels==850,2,]
+Viento_meridional_850<-datos_array[,,levels==850,3,]
+Viento_meridional_6000<-datos_array[,,levels==600,3,2]
+
+
+Cortante_Viento0<-abs(Viento_meridional_6000-Viento_meridional_8500)
+Criterio_de_Bonner0<-(Viento_zonal_8500>=12)==(Cortante_Viento0>=6)
+
+
+
+df$Bonner<-as.vector(Criterio_de_Bonner0)
+length(Criterio_de_Bonner0)
+
+#Grafico de criterio positivo de bonner
+ggplot(df,aes(x=lons,y=lats))+
+  geom_tile(aes(fill=Criterio_de_Bonner))+
+  mi_mapa+
+  
+
+
+#Grafico de criterio positivo de bonner
+ggplot(df,aes(x=lons,y=lats))+
+  geom_tile(aes(fill=Criterio_de_Bonner))+
+  mi_mapa+
+  coord_cartesian(expand = 0)+
+  labs(title="Temperatura 850 hPa",
+       x = "Longitud", 
+       y = "Latitud",
+       fill = "[K]")+
+  scale_fill_distiller(palette = "Oranges", direction = 1) #direccion = 1  pone la paleta como viene. -1 la invierte)
+
+
 
 
 # 5) Graficado de viento --------------------------------------------------
@@ -279,4 +316,3 @@ ggplot(df,aes(x=lons,y=lats))+
 
 #e) Guardar la variable del criterio de Bonner en un archivo binario de doble precisión y
 #Little Endian. (Para los puntos donde no se cumple el criterio definir un valor de undef). Crear un archivo de control (header).
-

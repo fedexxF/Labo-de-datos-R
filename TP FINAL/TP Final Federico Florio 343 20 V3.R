@@ -1,10 +1,4 @@
 ##################################################################################################################
-
-
-
-
-
-
 #Instalamos las librerias a usar
 
 install.packages("metR")
@@ -94,13 +88,21 @@ archivos<-list.files(".//datos", pattern = "\\.gra")
 
 #Con ciclo for abrimos todos los archivos 
 
-datos_array<-0
-for (i in 1:8) {
+for (i in 1:length(archivos)) {
   datos_array<-array(
     readBin(paste0(datos,archivos[i]),"numeric", size=4, n=nrecords, endian="little"),
     dim=c(nlons,nlats,nlevs,nvars,ntime)
-    )
+  )
 }
+
+#Sera mejor hacer esto?:
+#Leer_Binarios<-function(archivo){
+#readBin(paste0(datos,archivo),"numeric", size=4, n=nrecords, endian="little"),
+#dim=c(nlons,nlats,nlevs,nvars)
+#)
+#}
+
+#Pero es bastante ineficiente cargar todos los datos, si solo vamos a necesitar dos variables y fijar los valores de presion
 
 
 #Extraemos las variables  que nos piden. Es decir, viento zonal y meridional 
@@ -115,7 +117,6 @@ levels<-c(1000, 975, 950, 925, 900, 850, 800, 750, 700, 650, 600, 550, 500, 450,
 
 Viento_zonal_1000_500<-datos_array[,,levels>=500 & levels<=1000,2,]
 Viento_meridional_1000_500<-datos_array[,,levels>=500 & levels<=1000,3,]
-  
 
 #b) Calcular el criterio de Bonner en el nivel de 850 hPa para todos los tiempos (nivel superior 600 hPa)
 
@@ -123,63 +124,47 @@ Viento_meridional_1000_500<-datos_array[,,levels>=500 & levels<=1000,3,]
 #es, en modulo, mayor a 6 m/s
 #Y cuando el viento zonal en el nivel seleccionado sea superior a 12 m/s
 
-#Tenemos que fijar la presion a 850 hpa y tomar las variables 2 y 3 (viento zonal y meridional) 
+#Tenemos que fijar la presion a 850 hpa y tomar las variables 2 y 3 (viento zonal y meridional)  
 
 
-Viento_zonal_850<-datos_array[,,levels==850,2,]
+Viento_zonal_850<-Viento_zonal_1000_500[,,which(levels==850),]
+Viento_zonal_600<-Viento_zonal_1000_500[,,which(levels==600),]
+Viento_meridional_850<-Viento_meridional_1000_500[,,which(levels==850),]
+Viento_meridional_600<-Viento_meridional_1000_500[,,which(levels==600),]
 
-Viento_meridional_850<-datos_array[,,levels==850,3,]
-Viento_meridional_600<-datos_array[,,levels==600,3,]
+#Debemos usar el viento en modulo, es decir, 
+#v=sqrt(u^2+v^2) 
+
+Viento_850<-sqrt((Viento_zonal_850)^2+(Viento_meridional_850)^2)
+Viento_600<-sqrt((Viento_zonal_600)^2+(Viento_meridional_600)^2)
+
+#Sera mejor hacer esto?:
+
+#Viento_850<-sqrt((Viento_zonal_1000_500[,,which(levels==850),])^2+(Viento_zonal_1000_500[,,which(levels==600),])^2)
+#Viento_600<-sqrt((Viento_meridional_1000_500[,,which(levels==850),])^2+(Viento_meridional_1000_500[,,which(levels==600),])^2)
+#
 
 #Definimos la cortante de viento como la resta entre el nivel de 600 hpa y 850 hpa en valor absoluto
 
-Cortante_Viento<-abs(Viento_meridional_600-Viento_meridional_850)
+Cortante_Viento<-abs(Viento_600-Viento_850)
 
-#Sera esto mas eficinete???
-
-#Viento_zonal_850<-Viento_zonal_1000_500[,,levels==850,2,]
-#Viento_meridional_850<-Viento_meridional_1000_500[,,levels==850,2,]
-#Viento_meridional_600<-Viento_meridional_1000_500[,,levels==600,2,]
-
-
-#Aplico el criterio de bonner
-#Viento zonal en 850 hpa >12
-#Cortante de viento = Viento merdional(600hpa)- Viento meridional(850hpa) > 6
-
-
-#Viento_zonal_850_12<-which(Viento_zonal_850>=12)
-Viento_zonal_850_12<-Viento_zonal_850>=12
-Cortante_Viento<-(abs(Viento_meridional_600-Viento_meridional_850)>=6)
-#Cortante_Viento2<-which(abs(Viento_meridional_600-Viento_meridional_850)>=6)
-
-#Puede servir...creo
-#Viento_Zonal_Bonner<-array(Viento_zonal_850[Viento_zonal_850_12],dim=c(147,71,8))
-Viento_Zonal_Bonner<-Viento_zonal_850[Viento_zonal_850_12]
-
-Cortante_Viento<-array(abs(Viento_meridional_600-Viento_meridional_850),dim = c(141,71,8))
-Cortante_Viento_Bonner<-Cortante_Viento[(Cortante_Viento>=6)]
-  
 ################################################################################################################
 
 #Necesito los valores TRUE o FALSE en los puntos de reticula en donde se cumple el criterio de bonner
 #Teniamos dos variables que contenian viento zonal y Cortante de viento
 #Podemos hacer una comparacion logica y eso nos va a devolver lo pedido
 
-#Viento_zonal_850<-datos_array[,,levels==850,2,]
-#Cortante_Viento<-abs(Viento_meridional_600-Viento_meridional_850)
-
 #Aplico el criterio de bonner
-#Viento zonal en 850 hpa >=12
-#Cortante de viento = Viento merdional(600hpa)- Viento meridional(850hpa) >= 6
+#Viento_850 >=12
+#Cortante de viento = Viento(600hpa)- Viento (850hpa) >= 6
 
-Criterio_de_Bonner<-(Viento_zonal_850>=12)==(Cortante_Viento>=6)
-Criterio_de_Bonner_PosicionesTRUE<-which((Viento_zonal_850>=12)==(Cortante_Viento>=6))
+Criterio_de_Bonner<-(Viento_850>=12) & (Cortante_Viento>=6)
 
 #c) Definir una variable donde su valor es 1 si se cumple el criterio de bonner.
 #Es decir que de cumplirse el criterio de BONNER, en vez de TRUE, pondremos un 1
 
-Criterio_de_Bonner[[TRUE]]<-1
-
+Criterio_de_Bonner_TRUE<-(Viento_850>=12) & (Cortante_Viento>=6)
+Criterio_de_Bonner_TRUE[[TRUE]]<-1
 
 
 #d) Graficar en 4 paneles la evolución del criterio de Bonner junto con el viento en
@@ -195,37 +180,43 @@ layout.show(4)
 
 #Preparo los datos
 
-lons <- seq(from=200.00,by=1,length.out=nlons)   #Tambien sacado del CTL
+lon <- seq(from=200.00,by=1,length.out=nlons)   #Tambien sacado del CTL
 lats <- seq(from=-70.00, by=1, length.out=nlats)
 
-x <- rep(lons,nlats) #Se va a repetir 96 veces
-y <- rep(lats, each=nlons) #Se va a repetir 96 veces
+x <- rep(lon,nlats) #Se va a repetir 71 veces
+y <- rep(lats, each=nlons) #Se va a repetir 141 veces
 
 x
 y
 
-length(lons)
+length(lon)
 length(lats)
 length(x)
 length(y)
 
-df <- data.frame(lons=x,lats=y)
+df <- data.frame(lon=x,lats=y)
 df
 
+#pero esto mismo lo hace metR <3 :
+x_y <- expand.grid(x = lon, y = lats) 
 
+#Listo! Ya podemos armar el df:
+df1 <- data.frame(lon=x_y$x,lat=x_y$y)
+
+df==df1
 
 # 5) Graficado de viento --------------------------------------------------
 
 #Grafiquemos el viento: para eso tenemos que agregar a u y a v a nuestro df:
 
-Viento_zonal_8500<-datos_array[,,levels==850,2,2]
-Viento_meridional_8500<-datos_array[,,levels==850,3,2]
+Viento_zonal_850_12<-datos_array[,,levels==850,2,2]
+Viento_meridional_850_12<-datos_array[,,levels==850,3,2]
 
-df$Viento_zonal_8500 = as.vector(Viento_zonal_8500)  #Lo guardamos en el data frame como vector
-df$Viento_meridional_8500 = as.vector(Viento_meridional_8500)  #Lo guardamos en el data frame en la columna V
+df$Viento_zonal_850_12 = as.vector(Viento_zonal_850_12)  #Lo guardamos en el data frame como vector
+df$Viento_meridional_850_12 = as.vector(Viento_meridional_850_12)  #Lo guardamos en el data frame en la columna V
 
 
-mapa <- map_data("world") #Cargamos un mapa
+mapa <-map_data("world") #Cargamos un mapa
 
 #Devuelve un dataframe listo para graficar un mapa. 
 #Podemos usar geom_path() o geom_polygon() en caso de querer colorear los contientes
@@ -249,10 +240,10 @@ mi_mapa <- geom_path(data=mapa,                    #Le agrego un poco de estilo
 #Los del modelo van de 0 a 360
 
 #Usamos la función de metR para convertir longitudes:
-df$lons <- ConvertLongitude(df$lons) 
+df$lon <- ConvertLongitude(df$lon) 
 
 
-# 5) Graficado de viento --------------------------------------------------
+  # 5) Graficado de viento --------------------------------------------------
 
 
 #Vamos a usar la capa geometrica geom_arrow() de metR pensada para graficar
@@ -260,13 +251,13 @@ df$lons <- ConvertLongitude(df$lons)
 # Ajustemos el tamaño con scale_mag() de metR y usemos el parametro skip
 # para que no grafique todas las flechas.
 
-ggplot(df,aes(x=lons,y=lats))+
-  geom_arrow(aes(dx=Viento_zonal_8500, dy=Viento_meridional_8500), 
+ggplot(df,aes(x=lon,y=lats))+
+  geom_arrow(aes(dx=Viento_zonal_850_12, dy=Viento_meridional_850_12), 
              skip = 2,           
-             size = 0.2,
+             size = 0.01,
              arrow.type = "open",
              color = "black")+
-  coord_quickmap(xlim = range(df$lons), ylim = range(df$lats), expand = FALSE)+
+  coord_quickmap(xlim = range(df$lon), ylim = range(df$lats), expand = FALSE)+
   scale_mag() +
   mi_mapa +
   labs(title="Viento en 850 hPa",
@@ -275,8 +266,74 @@ ggplot(df,aes(x=lons,y=lats))+
        mag = "[m/s]")+
   theme_bw()
 
+# 6) Graficado Criterio de Bonner --------------------------------------------------
+
+#Grafiquemos Criterio de Bonner del dia 2
+
+Criterio_de_Bonner_TRUE8500<-Criterio_de_Bonner_TRUE[,,2]
+
+df$Criterio_de_Bonner_TRUE8500 = as.vector(Criterio_de_Bonner_TRUE8500)  #Lo guardamos en el data frame como vector
+
+#grafico 1
+
+ggplot(df,aes(x=lon,y=lats))+
+  geom_tile(aes(fill=Criterio_de_Bonner_TRUE8500))+
+  coord_quickmap(xlim = range(df$lon), ylim = range(df$lats), expand = FALSE)+
+  mi_mapa+
+  labs(title="Criterio de Bonner 850 hPa",
+       x = "Longitud", 
+       y = "Latitud",
+       fill = "[Criterio Bonner]")+
+  scale_fill_distiller(palette = "Greys", direction = 1)
+
+
+# 6) Unimos los mapas -----------------------------------------------------
+
+#Unamos ambos mapas:
+ggplot(df,aes(x=lon,y=lats))+
+  geom_tile(aes(fill=Criterio_de_Bonner_TRUE8500))+
+  mi_mapa+
+  geom_arrow(aes(dx=Viento_zonal_850_12, dy=Viento_meridional_850_12), 
+             skip = 2,           
+             size = 0.3,
+             arrow.type = "open",
+             color = "black")+
+  scale_mag(name="[m/s]")+
+            labs(mag = "")+
+  coord_quickmap(xlim = range(df$lon), ylim = range(df$lats), expand = FALSE)+
+  labs(title="Viento y Criterio de Bonner 850 hPa",
+       x = "Longitud", 
+       y = "Latitud",
+       fill = "[Criterio Bonner]")+
+  scale_fill_distiller(palette = "Greys", direction = 1)+ 
+  scale_y_continuous(breaks=seq(-90,90,10))+    #Cambio de escalas en y
+  scale_x_continuous(breaks=seq(-180,180,30))+  #Cambio de escalas en x
+  theme_bw()
+
 
 
 #e) Guardar la variable del criterio de Bonner en un archivo binario de doble precisión y
 #Little Endian. (Para los puntos donde no se cumple el criterio definir un valor de undef). Crear un archivo de control (header).
+
+#ejemplo de uso de readBin writeBin
+
+#1 Escribo y leo los contenidos de un archivo:
+
+#creo una matriz en el workspace!
+a=as.vector(Criterio_de_Bonner)
+
+#Creo el archivo
+fid = file('CriterioBonner.bin', 'wb') #Permisos para escribir
+fid    
+writeBin(a, fid) #guardo a en el archivo fid
+close(fid)       #Lo cierro. ya esta
+fid              #NO hay nada, esta cerrado
+
+
+
+#leo el archivo
+fid = file('CriterioBonner.bin',"rb") #Lee el archivo
+m5 = readBin(fid, logical(),10) # genero una variable m5 y que me guarde fid y numeric() hasta 10
+close(fid)
+m5                             #Veamos lo que guardo
 
