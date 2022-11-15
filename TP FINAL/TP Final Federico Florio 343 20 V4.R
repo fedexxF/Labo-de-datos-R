@@ -44,9 +44,9 @@ salidas <- "~/Escritorio/LABO/Labo-de-datos-R-main/TP FINAL/salidas/"
 
 #Seteamos directorios de trabajo (Casa)
 
-setwd("D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/TP FINAL")
-datos <- "D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/TP FINAL/datos/"
-salidas <- "D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/TP FINAL/salidas/"
+#setwd("D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/TP FINAL")
+#datos <- "D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/TP FINAL/datos/"
+#salidas <- "D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/TP FINAL/salidas/"
 
 # Leemos el archivo "hbonner.ctl" y extraemos las variables
 
@@ -351,12 +351,33 @@ Grafico_mapa + facet_wrap( ~ Datos_Cada_12_hs, ncol=2)+
 #creo una matriz en el workspace!
 Criterio_de_Bonner_TRUE_NA=as.vector(Criterio_de_Bonner)
 
+Criterio_de_Bonner_TRUE_NA[[TRUE]]<-1
+Criterio_de_Bonner_TRUE_NA[[0]]<-NA
+
+
 
 #Creo el archivo
-fid = file('CriterioBonner.bin', 'wb') #Permisos para escribir
-fid    
-writeBin(Criterio_de_Bonner_TRUE_NA, fid) #guardo a en el archivo fid
-close(fid)       #Lo cierro. ya esta
+Archivo_Bonner = file('CriterioBonner.bin', 'wb') #Permisos para escribir
+Archivo_Bonner  
+writeBin(Criterio_de_Bonner_TRUE_NA, Archivo_Bonner,size = 4,endian = "little Endian" ) #guardo a en el archivo fid
+close(Archivo_Bonner)       #Lo cierro. ya esta
 
-ArchivO_CTL<-write("")
+ArchivO_CTL<-sink(here("salidas","CriterioBonner.ctl"))
+  print(paste("dset ^bonner200703%d2%h2.gra"))
+  print(paste("undef NA"))
+  print(paste("title Bajas segregadas"))
+  print(paste("options little_endian"))
+  print(paste("options template"))
+  print(paste("xdef 141 linear 200.000000 1.000000"))
+  print(paste("ydef 71 linear -70.000000 1"))
+  print(paste("tdef 8 linear 18Z26mar2007 6hr"))
+  print(paste("zdef 1 levels 850"))
+  print(paste("vars 1"))
+  print(paste("CB  1 99  Criterio de Bonner"))
+  print(paste("endvars"))
+sink()
+
+data<-array(Archivo_Bonner,c(141,71,8))
+
+
 
