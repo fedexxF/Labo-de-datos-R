@@ -257,7 +257,7 @@ ggplot(df,aes(x=lon,y=lats))+
              size = 0.3,
              arrow.type = "open",
              color = "black")+
-  coord_quickmap(xlim = range(df$lon), ylim = range(df$lats), expand = FALSE)+
+  #coord_quickmap(xlim = range(df$lon), ylim = range(df$lats), expand = FALSE)+
   scale_mag() +
   mi_mapa +
   labs(title="Viento en 850 hPa",
@@ -304,7 +304,8 @@ ggplot(df,aes(x=lon,y=lats))+
              color = "black")+
   scale_mag(name="[m/s]")+
   labs(mag = "")+
-  coord_quickmap(xlim = range(df$lon), ylim = range(df$lats), expand = FALSE)+
+  #coord_quickmap(xlim = range(df$lon), ylim = range(df$lats), expand = FALSE)+
+  coord_quickmap(xlim = range(-100:-30), ylim = range(df$lats), expand = FALSE)+
   labs(title="Viento y Criterio de Bonner 850 hPa",
        x = "Longitud", 
        y = "Latitud",

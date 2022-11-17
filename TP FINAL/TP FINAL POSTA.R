@@ -103,7 +103,7 @@ for (i in 1:length(archivos)) {
 }
 
 datos_array<-array(vector,
-  dim=c(nlons,nlats,nlevs,nvars,ntime)
+                   dim=c(nlons,nlats,nlevs,nvars,ntime)
 )
 
 #Sera mejor hacer esto?:
@@ -124,21 +124,9 @@ datos_array<-array(vector,
 ##zdef 21 levels 1000 975 950 925 900 850 800 750 700 650 600 550 500 450 400 350 300 250 200 150 100
 
 levels<-c(1000, 975, 950, 925, 900, 850, 800, 750, 700, 650, 600, 550, 500, 450, 400, 350, 300, 250, 200, 150, 100)
-#Como me piden del norte argentino, voy a tomar las coordenadas de sudamerica
 
-lat<-c(seq(0,-70,-1))
-lon<-c(seq(200,341,1)) 
 
-length(lat)
-length(lon)
-
-#ydef 71 linear -70.000000 1
-#xdef 141 linear 200.000000 1.000000
-
-Lat_Sud<-c(seq(0,-90,-1))
-Lon_Sud<-c(seq(-100,-20,1))
-  
-Viento_zonal_1000_500<-datos_array[lon>=270 & lon<=330,lat>=-90 & lat<=-30,levels>=500 & levels<=1000,2,]
+Viento_zonal_1000_500<-datos_array[,,levels>=500 & levels<=1000,2,]
 Viento_meridional_1000_500<-datos_array[,,levels>=500 & levels<=1000,3,]
 
 #b) Calcular el criterio de Bonner en el nivel de 850 hPa para todos los tiempos (nivel superior 600 hPa)
@@ -335,7 +323,7 @@ Grafico_mapa<-ggplot(df,aes(x=lon,y=lats))+
   scale_mag(name="[m/s]")+
   labs(mag = "")+
   #coord_quickmap(xlim = range(df$lon), ylim = range(df$lats), expand = FALSE)+
-  coord_quickmap(xlim = range(-100:-20), ylim = range(df$lats), expand = FALSE)+
+  coord_quickmap(xlim = range(-100:-30), ylim = range(df$lats), expand = FALSE)+
   labs(title="Viento y Criterio de Bonner 850 hPa",
        x = "Longitud", 
        y = "Latitud",
@@ -349,7 +337,7 @@ Grafico_mapa<-ggplot(df,aes(x=lon,y=lats))+
   scale_y_continuous(breaks=seq(-90,90,10))+    #Cambio de escalas en y
   scale_x_continuous(breaks=seq(-180,180,20))+  #Cambio de escalas en x
   theme_bw()
-  
+
 Grafico_mapa + facet_wrap( ~ Datos_Cada_12_hs, ncol=2)+
   theme(strip.text.x = element_text(size=8, angle=0),
         strip.background = element_rect(colour="black", fill="#CCCCFF"))
@@ -368,7 +356,7 @@ Grafico_mapa + facet_wrap( ~ Datos_Cada_12_hs, ncol=2)+
 #Criterio_de_Bonner_TRUE_NA[[TRUE]]<-1
 #Criterio_de_Bonner_TRUE_NA[[0]]<-NA
 
-Criterio_de_Bonner_Evaluacion[Criterio_de_Bonner_Evaluacion == 0]<-9.999E+20
+Criterio_de_Bonner_Evaluacion[Criterio_de_Bonner_Evaluacion == NA]<-9.999E+20
 #Ya lo tenia vectorizado
 Criterio_de_Bonner_Evaluacion
 
@@ -384,22 +372,18 @@ readBin("CriterioBonner.bin","numeric",n=40044,size = 4,endian = "little Endian"
 
 
 ArchivO_CTL<-sink(here("salidas","CriterioBonner.ctl"))
-  print(paste("dset ^CriterioBonner.bin"))
-  print(paste("undef 9.999E+20"))
-  print(paste("title Criterio de Bonner"))
-  print(paste("options little_endian"))
-  print(paste("options template"))
-  print(paste("xdef 141 linear 200.000000 1.000000"))
-  print(paste("ydef 71 linear -70.000000 1"))
-  print(paste("tdef 8 linear 18Z26mar2007 6hr"))
-  print(paste("zdef 1 levels 850"))
-  print(paste("vars 1"))
-  print(paste("CB  1 99  Criterio de Bonner"))
-  print(paste("endvars"))
+print(paste("dset ^CriterioBonner.bin"))
+print(paste("undef 9.999E+20"))
+print(paste("title Criterio de Bonner"))
+print(paste("options little_endian"))
+print(paste("options template"))
+print(paste("xdef 141 linear 200.000000 1.000000"))
+print(paste("ydef 71 linear -70.000000 1"))
+print(paste("tdef 8 linear 18Z26mar2007 6hr"))
+print(paste("zdef 1 levels 850"))
+print(paste("vars 1"))
+print(paste("CB  1 99  Criterio de Bonner"))
+print(paste("endvars"))
 sink()
 
-
-
-
-
-
+#EScritura de ascci
