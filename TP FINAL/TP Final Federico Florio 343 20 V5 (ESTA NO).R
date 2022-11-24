@@ -170,14 +170,6 @@ Criterio_de_Bonner_TRUE[[TRUE]]<-1
 #d) Graficar en 4 paneles la evolución del criterio de Bonner junto con el viento en
 #vectores.
 
-dev.off()
-x11()
-
-matrix(c(1:4),nrow = 2,byrow = FALSE)
-layout(matrix(c(1:4),nrow = 2,byrow = FALSE))
-
-layout.show(4)
-
 #Preparo los datos
 
 lon <- seq(from=200.00,by=1,length.out=nlons)   #Tambien sacado del CTL
@@ -257,7 +249,6 @@ ggplot(df,aes(x=lon,y=lats))+
              size = 0.3,
              arrow.type = "open",
              color = "black")+
-  coord_quickmap(xlim = range(df$lon), ylim = range(df$lats), expand = FALSE)+
   scale_mag() +
   mi_mapa +
   labs(title="Viento en 850 hPa",

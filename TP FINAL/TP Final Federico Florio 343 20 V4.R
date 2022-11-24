@@ -46,9 +46,9 @@ salidas <- "~/Escritorio/LABO/Labo-de-datos-R-main/TP FINAL/salidas/"
 
 #Seteamos directorios de trabajo (Casa)
 
-#setwd("D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/TP FINAL")
-#datos <- "D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/TP FINAL/datos/"
-#salidas <- "D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/TP FINAL/salidas/"
+setwd("D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/TP FINAL")
+datos <- "D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/TP FINAL/datos/"
+salidas <- "D:/Users/Windows 10/Desktop/LABO/Labo-de-datos-R-main/TP FINAL/salidas/"
 
 # Leemos el archivo "hbonner.ctl" y extraemos las variables
 
@@ -138,7 +138,7 @@ length(lon)
 Lat_Sud<-c(seq(0,-90,-1))
 Lon_Sud<-c(seq(-100,-20,1))
   
-Viento_zonal_1000_500<-datos_array[lon>=270 & lon<=330,lat>=-90 & lat<=-30,levels>=500 & levels<=1000,2,]
+Viento_zonal_1000_500<-datos_array[,,levels>=500 & levels<=1000,2,]
 Viento_meridional_1000_500<-datos_array[,,levels>=500 & levels<=1000,3,]
 
 #b) Calcular el criterio de Bonner en el nivel de 850 hPa para todos los tiempos (nivel superior 600 hPa)

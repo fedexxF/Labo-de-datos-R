@@ -1,4 +1,4 @@
-############################################TODOS LOS DATOS######################################################################
+#################################################TP FINAL#################################################################
 #Instalamos las librerias a usar
 
 install.packages("metR")
@@ -16,17 +16,17 @@ library(here)
 #########################################ENUNCIADO###############################################################
 
 # Corriente en chorro en capas bajas (LLJ)
-#Para estimar la posición del LLJ en el norte argentino se puede utilizar el criterio de
-#Bonner, donde la condición para que se cumpla el mismo es que el viento en el nivel
+#Para estimar la posiciÃ³n del LLJ en el norte argentino se puede utilizar el criterio de
+#Bonner, donde la condiciÃ³n para que se cumpla el mismo es que el viento en el nivel
 #elegido sea superior a 12 m/s y la cortante vertical del viento entre ese nivel y un nivel
-#superior supere los 6 m/s. Se tienen los datos de análisis del GDAS, de un evento de
+#superior supere los 6 m/s. Se tienen los datos de anÃ¡lisis del GDAS, de un evento de
 #LLJ, en formato binario
 #a) Leer los datos del viento zonal y meridional para los niveles entre 1000 y 500 hPa.
 #b) Calcular el criterio de Bonner en el nivel de 850 hPa para todos los tiempos (nivel superior 600 hPa).
 #c) Definir una variable donde su valor es 1 si se cumple el criterio de bonner.
-#d) Graficar en 4 paneles la evolución del criterio de Bonner junto con el viento en
+#d) Graficar en 4 paneles la evoluciÃ³n del criterio de Bonner junto con el viento en
 #vectores.
-#e) Guardar la variable del criterio de Bonner en un archivo binario de doble precisión y
+#e) Guardar la variable del criterio de Bonner en un archivo binario de doble precisiÃ³n y
 #Little Endian. (Para los puntos donde no se cumple el criterio definir un valor de undef). Crear un archivo de control (header).
 
 
@@ -124,10 +124,15 @@ datos_array<-array(vector,
 ##zdef 21 levels 1000 975 950 925 900 850 800 750 700 650 600 550 500 450 400 350 300 250 200 150 100
 
 levels<-c(1000, 975, 950, 925, 900, 850, 800, 750, 700, 650, 600, 550, 500, 450, 400, 350, 300, 250, 200, 150, 100)
+lon_D<-c(seq(200,340,1))
+lat_D<-c(seq(-70,0,1))
+Sud_lon<-c(seq(270,330,1))
+Sud_Lat<-c(seq(-60,0,1))
 
+which(lon_D==Sud_lon)
 
-Viento_zonal_1000_500<-datos_array[,,levels>=500 & levels<=1000,2,]
-Viento_meridional_1000_500<-datos_array[,,levels>=500 & levels<=1000,3,]
+Viento_zonal_1000_500<-datos_array[lon_D>=270 & lon_D<=330,lat_D>=-60 & lat_D<=0,levels>=500 & levels<=1000,2,]
+Viento_meridional_1000_500<-datos_array[lon_D>=270 & lon_D<=330,lat_D>=-60 & lat_D<=0,levels>=500 & levels<=1000,3,]
 
 #b) Calcular el criterio de Bonner en el nivel de 850 hPa para todos los tiempos (nivel superior 600 hPa)
 
@@ -179,37 +184,21 @@ Criterio_de_Bonner_TRUE<-(Viento_850>=12) & (Cortante_Viento>=6)
 Criterio_de_Bonner_TRUE[[TRUE]]<-1
 
 
-#d) Graficar en 4 paneles la evolución del criterio de Bonner junto con el viento en
+#d) Graficar en 4 paneles la evoluciÃ³n del criterio de Bonner junto con el viento en
 #vectores.
 
 #Preparo los datos
 
-lon <- seq(from=200.00,by=1,length.out=nlons)   #Tambien sacado del CTL
-lats <- seq(from=-70.00, by=1, length.out=nlats)
+length(Sud_lon)
 
-x <- rep(rep(lon,nlats),4) #Se va a repetir 71 veces
-y <- rep(rep(lats, each=nlons),4) #Se va a repetir 141 veces
+lon <- seq(from=270,by=1,length.out=length(Sud_lon))   #Tambien sacado del CTL
+lats <- seq(from=-60.00, by=1, length.out=length(Sud_Lat))
 
-x
-y
+x <- rep(rep(lon,length(Sud_Lat)),4) #Se va a repetir 71 veces
+y <- rep(rep(lats, each=length(Sud_lon)),4) #Se va a repetir 141 veces
 
-length(lon)
-length(lats)
-length(x)
-length(y)
-
+#Armo el dataframe con las variables pedidas:
 df <- data.frame(lon=x,lats=y)
-df
-
-
-
-#pero esto mismo lo hace metR <3 :
-x_y <- expand.grid(x = lon, y = lats) 
-
-#Listo! Ya podemos armar el df:
-df1 <- data.frame(lon=x_y$x,lat=x_y$y)
-
-df==df1
 
 # 5) Graficado de viento --------------------------------------------------
 
@@ -221,7 +210,10 @@ Viento_meridional_850_12<-c(Viento_meridional_850[,,2],Viento_meridional_850[,,4
 df$Viento_zonal_850_12 = as.vector(Viento_zonal_850_12)  #Lo guardamos en el data frame como vector
 df$Viento_meridional_850_12 = as.vector(Viento_meridional_850_12)  #Lo guardamos en el data frame en la columna V
 
-Datos_12_hs<-c(rep("26/03 12hs",141*71),rep("27/03 00hs",141*71),rep("27/03 12hs",141*71),rep("28/03 00hs",141*71))
+Datos_12_hs<-c(rep("26/03 12hs",length(Sud_lon)*length(Sud_Lat)),
+               rep("27/03 00hs",length(Sud_lon)*length(Sud_Lat)),
+               rep("27/03 12hs",length(Sud_lon)*length(Sud_Lat)),
+               rep("28/03 00hs",length(Sud_lon)*length(Sud_Lat)))
 df$Datos_Cada_12_hs<-as.vector(Datos_12_hs)
 
 df[[10012,3]]
@@ -231,7 +223,7 @@ df[[10013,4]]
 df[[10014,3]]
 df[[10014,4]]
 
-sum(df[1:(141*71),3] != df[(141*71)+1:(141*71*2),3])
+sum(df[1:(length(Sud_lon)*length(Sud_Lat)),3] != df[(length(Sud_lon)*length(Sud_Lat))+1:(length(Sud_lon)*length(Sud_Lat)*2),3])
 
 
 
@@ -258,7 +250,7 @@ mi_mapa <- geom_path(data=mapa,                    #Le agrego un poco de estilo
 #Los de ggplot van de -180 a 180
 #Los del modelo van de 0 a 360
 
-#Usamos la función de metR para convertir longitudes:
+#Usamos la funciÃ³n de metR para convertir longitudes:
 df$lon <- ConvertLongitude(df$lon) 
 
 
@@ -267,7 +259,7 @@ df$lon <- ConvertLongitude(df$lon)
 
 #Vamos a usar la capa geometrica geom_arrow() de metR pensada para graficar
 
-# Ajustemos el tamaño con scale_mag() de metR y usemos el parametro skip
+# Ajustemos el tamaÃ±o con scale_mag() de metR y usemos el parametro skip
 # para que no grafique todas las flechas.
 
 ggplot(df,aes(x=lon,y=lats))+
@@ -323,7 +315,7 @@ Grafico_mapa<-ggplot(df,aes(x=lon,y=lats))+
   scale_mag(name="[m/s]")+
   labs(mag = "")+
   #coord_quickmap(xlim = range(df$lon), ylim = range(df$lats), expand = FALSE)+
-  coord_quickmap(xlim = range(-100:-30), ylim = range(df$lats), expand = FALSE)+
+  coord_quickmap(xlim = range(df$lon), ylim = range(df$lats), expand = FALSE)+
   labs(title="Viento y Criterio de Bonner 850 hPa",
        x = "Longitud", 
        y = "Latitud",
@@ -343,7 +335,7 @@ Grafico_mapa + facet_wrap( ~ Datos_Cada_12_hs, ncol=2)+
         strip.background = element_rect(colour="black", fill="#CCCCFF"))
 
 
-#e) Guardar la variable del criterio de Bonner en un archivo binario de doble precisión y
+#e) Guardar la variable del criterio de Bonner en un archivo binario de doble precisiÃ³n y
 #Little Endian. (Para los puntos donde no se cumple el criterio definir un valor de undef). Crear un archivo de control (header).
 
 #ejemplo de uso de readBin writeBin
@@ -368,7 +360,7 @@ Archivo_Bonner
 writeBin(Criterio_de_Bonner_Evaluacion, Archivo_Bonner,size = 4,endian = "little" ) #guardo a en el archivo fid
 close(Archivo_Bonner)       #Lo cierro. ya esta
 
-readBin("CriterioBonner.bin","numeric",n=40044,size = 4,endian = "little" )
+readBin("CriterioBonner.bin","./salidas","numeric",n=length(Criterio_de_Bonner_Evaluacion),size = 4,endian = "little" )
 
 
 
@@ -376,12 +368,12 @@ archivo_salida <- (here("salidas","CriterioBonner.ctl"))
 
 
 Instrucciones_CTL<-data.frame(c(paste("dset ^CriterioBonner.bin"),
-                                paste("undef 9.999E+20"),
+                                paste("undef 9.999"),
                                 paste("title Criterio de Bonner"),
                                 paste("options little_endian"),
                                 paste("options template"),
-                                paste("xdef 141 linear 200.000000 1.000000"),
-                                paste("ydef 71 linear -70.000000 1"),
+                                paste("xdef 61 linear 270.000000 1.000000"),
+                                paste("ydef 61 linear -60.000000 1"),
                                 paste("tdef 8 linear 18Z26mar2007 6hr"),
                                 paste("zdef 1 levels 850"),
                                 paste("vars 1"),
@@ -390,8 +382,3 @@ Instrucciones_CTL<-data.frame(c(paste("dset ^CriterioBonner.bin"),
 ))
 
 write.table(Instrucciones_CTL,archivo_salida,quote=FALSE,col.names = FALSE,row.names = FALSE)
-
-
-
-
-

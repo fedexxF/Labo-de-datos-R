@@ -170,13 +170,6 @@ Criterio_de_Bonner_TRUE[[TRUE]]<-1
 #d) Graficar en 4 paneles la evolución del criterio de Bonner junto con el viento en
 #vectores.
 
-dev.off()
-x11()
-
-matrix(c(1:4),nrow = 2,byrow = FALSE)
-layout(matrix(c(1:4),nrow = 2,byrow = FALSE))
-
-layout.show(4)
 
 #Preparo los datos
 
